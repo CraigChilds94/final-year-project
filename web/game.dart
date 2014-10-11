@@ -16,6 +16,7 @@ class Game {
     Keyboard keyboard;
 
     double width, height;
+    double speed;
 
     Game(this.width, this.height)
     {
@@ -26,10 +27,11 @@ class Game {
 
     void _init()
     {
+        // speed = 1.0;
         keyboard = new Keyboard();
         container = new DivElement();
         document.body.nodes.add(container);
-        
+
         container.setAttribute('width', width.toString());
         container.setAttribute('height', height.toString());
 
@@ -62,10 +64,16 @@ class Game {
 
     void _handleKeyboardInput()
     {
+        if(keyboard.isPressed(KeyCode.SHIFT)) {
+            speed = 2.0;
+        } else {
+            speed = 1.0;
+        }
+
         if(keyboard.isPressed(KeyCode.W)) {
-            camera.translateZ(-1.0);
+            camera.translateZ(-speed);
         } else if(keyboard.isPressed(KeyCode.S)) {
-            camera.translateZ(1.0);
+            camera.translateZ(speed);
         }
 
         if(keyboard.isPressed(KeyCode.A)) {
