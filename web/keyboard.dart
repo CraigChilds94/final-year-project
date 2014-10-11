@@ -17,7 +17,7 @@ class Keyboard {
     }
 
     /**
-     * Check if the given key code is pressed. You should use the [KeyCode] class.
+     * Check if the given key code is pressed. Using the [KeyCode] class.
      */
     isPressed(int keyCode) => _keys.containsKey(keyCode);
 }

@@ -3,7 +3,7 @@ import 'dart:math' as Math;
 
 import 'package:vector_math/vector_math.dart';
 import 'package:three/three.dart';
-import 'package:three/extras/renderers/canvas_renderer.dart';
+//import 'package:three/src/renderers/web_gl_renderer.dart';
 
 import 'keyboard.dart';
 
@@ -12,7 +12,7 @@ class Game {
     Element container;
     PerspectiveCamera camera;
     Scene scene;
-    CanvasRenderer renderer;
+    WebGLRenderer renderer;
     Keyboard keyboard;
 
     double width, height;
@@ -44,7 +44,7 @@ class Game {
         _generateCubes();
         _createLight();
 
-        renderer = new CanvasRenderer();
+        renderer = new WebGLRenderer();
         renderer.setSize(width.toInt(), height.toInt());
         container.nodes.add(renderer.domElement);
 
@@ -117,7 +117,7 @@ class Game {
             cube.position.x = ((rnd.nextInt(1000) - 500.0) / 50.0).floor() * 50.0 + 25.0;
             cube.position.y = (cube.scale.y * 50.0) / 2.0;
             cube.position.z = ((rnd.nextInt(1000) - 500.0) / 50.0).floor() * 50.0 + 25.0;
-
+    
             scene.add(cube);
 
         }
