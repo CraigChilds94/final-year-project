@@ -2,5 +2,5 @@ import 'game.dart';
 
 void main()
 {
-    Game game = new Game(600, 400);    
+    Game game = new Game(400, 400);    
 }
