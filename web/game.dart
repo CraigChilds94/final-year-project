@@ -14,6 +14,7 @@ class Game {
     Scene scene;
     WebGLRenderer renderer;
     Keyboard keyboard;
+    PointLight light;
 
     double width, height;
     double speed;
@@ -27,28 +28,33 @@ class Game {
 
     void _init()
     {
-        // speed = 1.0;
-        keyboard = new Keyboard();
-        container = new DivElement();
-        document.body.nodes.add(container);
+        renderer = new WebGLRenderer(antialias:true)
+            ..setSize(width.toInt(), height.toInt())
+            ..shadowMapEnabled = true
+            ..shadowMapType    = PCFSoftShadowMap;
 
-        container.setAttribute('width', width.toString());
-        container.setAttribute('height', height.toString());
+        keyboard = new Keyboard();
+        container = new DivElement()
+            ..focus()
+            ..setAttribute('width', width.toString())
+            ..setAttribute('height', height.toString())
+            ..nodes.add(renderer.domElement);
+
+        document.body.nodes.add(container);
 
         _createCamera();
 
-        scene = new Scene();
+        var fog = new Fog()
+            ..color = new Color(0x000000);
+        scene = new Scene()
+            ..fog = fog;
+
         camera.lookAt(scene.position);
         camera.translateY(50.0);
 
         _generateCubes();
+        _createFloor();
         _createLight();
-
-        renderer = new WebGLRenderer();
-        renderer.setSize(width.toInt(), height.toInt());
-        container.nodes.add(renderer.domElement);
-
-        container.focus();
     }
 
     void _createCamera()
@@ -58,7 +64,7 @@ class Game {
 
     void _createLight()
     {
-        var light = new PointLight(0xffffff);
+        light = new PointLight(0xffffff);
         scene.add(light);
     }
 
@@ -92,6 +98,7 @@ class Game {
     dynamic _update(num time)
     {
         _handleKeyboardInput();
+        camera.position.copyInto(light.position);
         window.requestAnimationFrame(_update);
         _render();
     }
@@ -99,6 +106,15 @@ class Game {
     void _render()
     {
         renderer.render(scene, camera);
+    }
+
+    void _createFloor()
+    {
+        var geometry = new CubeGeometry(2000.0, 1.0, 2000.0);
+        var material = new MeshLambertMaterial(color: 0xAAAAAA);
+        var floor = new Mesh(geometry, material)
+            ..position.setValues(0.0, 0.0, 0.0);
+        scene.add(floor);
     }
 
     void _generateCubes()
@@ -111,13 +127,11 @@ class Game {
         for (int i = 0; i < 100; i ++) {
 
             var cube = new Mesh(geometry, material);
-
             cube.scale.y = rnd.nextInt(2) + 1.0;
-
             cube.position.x = ((rnd.nextInt(1000) - 500.0) / 50.0).floor() * 50.0 + 25.0;
             cube.position.y = (cube.scale.y * 50.0) / 2.0;
             cube.position.z = ((rnd.nextInt(1000) - 500.0) / 50.0).floor() * 50.0 + 25.0;
-    
+
             scene.add(cube);
 
         }
