@@ -96,25 +96,11 @@ class Game {
             camera.translateX(1.0);
         }
 
-//        if(keyboard.isPressed(KeyCode.LEFT)) {
-//            camera.rotation.add(new Vector3(0.0, 0.05, 0.0));
-//        } else if(keyboard.isPressed(KeyCode.RIGHT)) {
-//            camera.rotation.add(new Vector3(0.0, -0.05, 0.0));
-//        }
-
         if(keyboard.isPressed(KeyCode.LEFT)) {
-            camera.rotation.add(new Vector3(0.0, 0.0, 0.01));
+            camera.rotation.add(new Vector3(0.0, 0.05, 0.0));
         } else if(keyboard.isPressed(KeyCode.RIGHT)) {
-            camera.rotation.add(new Vector3(0.0, 0.0, -0.01));
+            camera.rotation.add(new Vector3(0.0, -0.05, 0.0));
         }
-
-        if(keyboard.isPressed(KeyCode.UP)) {
-            camera.rotation.add(new Vector3(0.0, 0.01, 0.0));
-        } else if(keyboard.isPressed(KeyCode.DOWN)) {
-            camera.rotation.add(new Vector3(0.0, -0.01, 0.0));
-        }
-        
-        print(camera.rotation.z);
     }
 
     dynamic _update(num time)
