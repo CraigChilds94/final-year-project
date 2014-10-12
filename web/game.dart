@@ -3,9 +3,7 @@ import 'dart:math' as Math;
 
 import 'package:vector_math/vector_math.dart';
 import 'package:three/three.dart';
-//import 'package:three/src/renderers/web_gl_renderer.dart';
-
-import 'keyboard.dart';
+import 'inputs.dart';
 
 class Game {
 
@@ -14,6 +12,7 @@ class Game {
     Scene scene;
     WebGLRenderer renderer;
     Keyboard keyboard;
+    Mouse mouse;
     PointLight light;
 
     double width, height;
@@ -39,6 +38,10 @@ class Game {
             ..setAttribute('width', width.toString())
             ..setAttribute('height', height.toString())
             ..nodes.add(renderer.domElement);
+
+        mouse = new Mouse()
+            ..attachTo(container)
+            ..click(_handleMouseClick);
 
         document.body.nodes.add(container);
 
@@ -68,6 +71,11 @@ class Game {
         scene.add(light);
     }
 
+    void _handleMouseClick(MouseEvent e)
+    {
+        print(e);
+    }
+
     void _handleKeyboardInput()
     {
         if(keyboard.isPressed(KeyCode.SHIFT)) {
@@ -88,11 +96,25 @@ class Game {
             camera.translateX(1.0);
         }
 
+//        if(keyboard.isPressed(KeyCode.LEFT)) {
+//            camera.rotation.add(new Vector3(0.0, 0.05, 0.0));
+//        } else if(keyboard.isPressed(KeyCode.RIGHT)) {
+//            camera.rotation.add(new Vector3(0.0, -0.05, 0.0));
+//        }
+
         if(keyboard.isPressed(KeyCode.LEFT)) {
-            camera.rotation.add(new Vector3(0.0, 0.05, 0.0));
+            camera.rotation.add(new Vector3(0.0, 0.0, 0.01));
         } else if(keyboard.isPressed(KeyCode.RIGHT)) {
-            camera.rotation.add(new Vector3(0.0, -0.05, 0.0));
+            camera.rotation.add(new Vector3(0.0, 0.0, -0.01));
         }
+
+        if(keyboard.isPressed(KeyCode.UP)) {
+            camera.rotation.add(new Vector3(0.0, 0.01, 0.0));
+        } else if(keyboard.isPressed(KeyCode.DOWN)) {
+            camera.rotation.add(new Vector3(0.0, -0.01, 0.0));
+        }
+        
+        print(camera.rotation.z);
     }
 
     dynamic _update(num time)

@@ -1,10 +1,10 @@
-import 'dart:html';
-import 'dart:collection';
+part of inputs;
 
 class Keyboard {
     HashMap<int, int> _keys = new HashMap<int, int>();
 
-    Keyboard() {
+    Keyboard()
+    {
         window.onKeyDown.listen((KeyboardEvent e) {
             // If the key is not set yet, set it with a timestamp.
             if (!_keys.containsKey(e.keyCode))
