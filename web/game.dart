@@ -98,7 +98,6 @@ class Game {
     {
         IO.HttpServer.bind(IO.InternetAddress.ANY_IP_V4, 8080).then((IO.HttpServer server) {
             print("HttpServer listening...");
-            server.serverHeader = "DartEcho (1.0) by James Slocum";
             server.listen((IO.HttpRequest request) {
                 if (IO.WebSocketTransformer.isUpgradeRequest(request)){
                     IO.WebSocketTransformer.upgrade(request).then(_handleWebSocketInbound);
