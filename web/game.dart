@@ -1,8 +1,6 @@
 import 'dart:html';
 import 'dart:math' as Math;
 import 'dart:async';
-import 'dart:io' as IO;
-import 'dart:convert';
 
 import 'package:vector_math/vector_math.dart';
 import 'package:three/extras/controls/first_person_controls.dart';
@@ -72,9 +70,11 @@ class Game {
         camera.lookAt(scene.position);
         camera.translateY(50.0);
 
-        _generateCubes();
+        //_generateCubes();
         _createFloor();
         _createLight();
+        
+        _initNetwork();
     }
     
     ///
@@ -90,52 +90,7 @@ class Game {
             ..onOpen.first.then(_onConnect)
             ..onError.first.then(_onFail);
     }
-    
-    ///
-    /// Create the server instance
-    ///
-    void _createServer()
-    {
-        IO.HttpServer.bind(IO.InternetAddress.ANY_IP_V4, 8080).then((IO.HttpServer server) {
-            print("HttpServer listening...");
-            server.listen((IO.HttpRequest request) {
-                if (IO.WebSocketTransformer.isUpgradeRequest(request)){
-                    IO.WebSocketTransformer.upgrade(request).then(_handleWebSocketInbound);
-                } else {
-                    print("Regular ${request.method} request for: ${request.uri.path}");
-                    _serveRequest(request);
-                }
-            });
-        });
-    }
-    
-    ///
-    /// What do we do with a connected client [socket]?
-    /// 
-    void _handleWebSocketInbound(IO.WebSocket socket)
-    {
-        print('Client connected!');
-        socket.listen((String s) {
-            if(s == "givemecubes") {
-                socket.add("I'll give you some cubes");
-            } else {
-                socket.add("I don't know what you mean?");
-            }
-        },
-        onDone: () {
-            print('Client disconnected');  
-        });
-    }
-    
-    /// 
-    /// Handle the non Web Socket [request]'s
-    /// 
-    void _serveRequest(request)
-    {
-        request.response.statusCode = HttpStatus.FORBIDDEN;
-        request.response.reasonPhrase = "WebSocket connections only";
-        request.response.close();
-    }
+  
     
     ///
     /// When connected to the server we want to listen
@@ -150,8 +105,6 @@ class Game {
         ws.onMessage.listen((e) {
             _handleMessage(e.data);
         });
-        
-        ws.send("givemecubes");
     }
     
     ///
@@ -162,16 +115,39 @@ class Game {
     ///
     void _onFail(_)
     {
-        print("Unable to connect, becoming host.");
-        _createServer();
+        print("Unable to connect. Reattempting connection.");
+        new Timer(new Duration(seconds:2), () {
+            _initNetwork(); 
+        });
     }
     
     ///
     /// What do we do when we get the [data] from our host?
     /// 
-    void _handleMessage(data)
+    void _handleMessage(String data)
     {
-        print(data);
+        var chunks = data.split(':');
+        var action = chunks[0];
+        
+        if(action == "makecube") {
+            var pos = chunks[1].split(',');
+            int x = int.parse(pos[0]);
+            int y = int.parse(pos[1]);
+            int z = int.parse(pos[2]);
+            _createCube(x.toDouble(), y.toDouble(), z.toDouble());
+        }
+    }
+    
+    ///
+    /// Create at cube at the position [x][y][z]
+    /// 
+    void _createCube(double x, double y, double z) 
+    {
+        var geometry = new CubeGeometry(50.0, 50.0, 50.0);
+        var material = new MeshLambertMaterial(color: 0x99FF99, overdraw: true);
+        var cube = new Mesh(geometry, material)
+            ..position.setValues(x, y, z);
+        scene.add(cube);
     }
     
     ///
@@ -209,6 +185,7 @@ class Game {
     void _handleMouseClick(MouseEvent e)
     {
         print(e);
+        ws.send("givemecubes");
     }
     
     /// 
