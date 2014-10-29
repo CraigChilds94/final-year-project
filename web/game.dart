@@ -17,31 +17,35 @@ class Game {
     Keyboard keyboard;
     Mouse mouse;
     PointLight light;
+    
+    List players; 
+    Mesh player;
 
     WebSocket ws;
 
     double width, height;
     double speed;
-    
+
     ///
     /// Construct a new [Game] object
-    /// 
+    ///
     /// Takes a [width] and a [height] for the desired
     /// game panel.
     ///
     Game(this.width, this.height)
     {
         print("Starting Game");
-        _init();
-        _update(0);
+        init();
+        update(0);
     }
 
     ///
     /// Initialise the game and any
     /// components.
     ///
-    void _init()
-    {
+    void init()
+    {   
+        players = new List();
         renderer = new WebGLRenderer(antialias:true)
             ..setSize(width.toInt(), height.toInt())
             ..shadowMapEnabled = true
@@ -56,11 +60,12 @@ class Game {
 
         mouse = new Mouse()
             ..attachTo(container)
-            ..click(_handleMouseClick);
+            ..click(handleMouseClick);
 
         document.body.nodes.add(container);
-
-        _createCamera();
+    
+//        spawnPlayer(0.0, 0.0, 0.0);
+        createCamera();
 
         var fog = new Fog()
             ..color = new Color(0x000000);
@@ -70,78 +75,78 @@ class Game {
         camera.lookAt(scene.position);
         camera.translateY(50.0);
 
-        //_generateCubes();
-        _createFloor();
-        _createLight();
-        
-        _initNetwork();
+//        generateCubes();
+        createFloor();
+        createLight();
+
+        initNetwork();
     }
-    
+
     ///
     /// Initialise the network system for
     /// the game.
-    /// 
+    ///
     /// If it cannot connect to the local [ws] then
     /// become the host.
     ///
-    void _initNetwork() 
+    void initNetwork()
     {
         ws = new WebSocket('ws://127.0.0.1:1672/ws')
-            ..onOpen.first.then(_onConnect)
-            ..onError.first.then(_onFail);
+            ..onOpen.first.then(onConnect)
+            ..onError.first.then(onFail);
     }
-  
-    
+
+
     ///
     /// When connected to the server we want to listen
     /// on the [ws] and handle any data that is sent
     /// to this client.
-    /// 
-    /// We also take some information about the socket : [_]
     ///
-    void _onConnect(_)
+    /// We also take some information about the socket : []
+    ///
+    void onConnect(_)
     {
         print("Connected to server.");
         ws.onMessage.listen((e) {
-            _handleMessage(e.data);
+            handleMessage(e.data);
         });
     }
-    
+
     ///
-    /// We call this if we can't connect to an existing 
+    /// We call this if we can't connect to an existing
     /// host, therefore we need to become the host
-    /// 
-    /// We also take some information about the socket : [_]
     ///
-    void _onFail(_)
+    /// We also take some information about the socket : []
+    ///
+    void onFail(_)
     {
         print("Unable to connect. Reattempting connection.");
         new Timer(new Duration(seconds:2), () {
-            _initNetwork(); 
+            initNetwork();
         });
     }
-    
+
     ///
     /// What do we do when we get the [data] from our host?
-    /// 
-    void _handleMessage(String data)
+    ///
+    void handleMessage(String data)
     {
         var chunks = data.split(':');
         var action = chunks[0];
-        
+
         if(action == "makecube") {
             var pos = chunks[1].split(',');
             int x = int.parse(pos[0]);
             int y = int.parse(pos[1]);
             int z = int.parse(pos[2]);
-            _createCube(x.toDouble(), y.toDouble(), z.toDouble());
+            createCube(x.toDouble(), y.toDouble(), z.toDouble());
         }
     }
-    
+
     ///
     /// Create at cube at the position [x][y][z]
-    /// 
-    void _createCube(double x, double y, double z) 
+    ///
+    void createCube(double x, double y, double z)
     {
         var geometry = new CubeGeometry(50.0, 50.0, 50.0);
         var material = new MeshLambertMaterial(color: 0x99FF99, overdraw: true);
@@ -149,13 +154,14 @@ class Game {
             ..position.setValues(x, y, z);
         scene.add(cube);
     }
-    
+
     ///
     /// Create a new [camera] so that we can see things
     ///
-    void _createCamera()
-    {
+    void createCamera()
+    {   
         camera = new PerspectiveCamera(45.0, width / height, 1.0, 10000.0);
+        
 //        controls = new FirstPersonControls(camera)
 //            ..lookSpeed = 0.4
 //            ..movementSpeed = 20
@@ -167,11 +173,11 @@ class Game {
 //            // ..lon = -150
 //            // ..lat = 120;
     }
-    
+
     ///
     /// Create a new [light] and add it to the scene
     ///
-    void _createLight()
+    void createLight()
     {
         light = new PointLight(0xffffff);
         scene.add(light);
@@ -179,19 +185,19 @@ class Game {
 
     ///
     /// Event handler for a mouse click
-    /// 
+    ///
     /// This takes a [MouseEvent]
     ///
-    void _handleMouseClick(MouseEvent e)
+    void handleMouseClick(MouseEvent e)
     {
         print(e);
         ws.send("givemecubes");
     }
-    
-    /// 
+
+    ///
     /// Handler for [keyboard] input
-    /// 
-    void _handleKeyboardInput()
+    ///
+    void handleKeyboardInput()
     {
         if(keyboard.isPressed(KeyCode.SHIFT)) {
             speed = 2.0;
@@ -217,32 +223,32 @@ class Game {
             camera.rotation.add(new Vector3(0.0, -0.05, 0.0));
         }
     }
-    
+
     ///
     /// The games update function, it takes an
     /// argument which is the delta [time]
     ///
-    dynamic _update(num time)
+    dynamic update(num time)
     {
-        _handleKeyboardInput();
+        handleKeyboardInput();
 //        controls.update(time);
         camera.position.copyInto(light.position);
-        window.requestAnimationFrame(_update);
-        _render();
+        window.requestAnimationFrame(update);
+        render();
     }
-    
-    /// 
+
+    ///
     /// Render the [scene] through the [camera]
-    /// 
-    void _render()
+    ///
+    void render()
     {
         renderer.render(scene, camera);
     }
-    
+
     ///
     /// Generate a floor
-    /// 
-    void _createFloor()
+    ///
+    void createFloor()
     {
         var geometry = new CubeGeometry(2000.0, 1.0, 2000.0);
         var material = new MeshLambertMaterial(color: 0x99FF99, overdraw: true);
@@ -250,11 +256,11 @@ class Game {
             ..position.setValues(0.0, 0.0, 0.0);
         scene.add(floor);
     }
-    
+
     ///
     /// Generate some cubes
-    /// 
-    void _generateCubes()
+    ///
+    void generateCubes()
     {
         var geometry = new CubeGeometry(50.0, 50.0, 50.0);
         var material = new MeshLambertMaterial(color: 0xff3030, overdraw: true);
@@ -273,10 +279,25 @@ class Game {
         }
     }
     
+    void spawnPlayer(double x, double y, double z, [bool networked = false])
+    {
+        var geometry = new CubeGeometry(10.0, 50.0, 10.0);
+        var material = new MeshLamberMaterial(color: 0x00FF00, overdraw: true);
+        var mesh = new Mesh(geometry, material)
+            ..position.setValues(x, y, z);
+        
+        if(!networked) {
+            player = mesh;
+            return;
+        } 
+        
+        players.add(mesh);
+    }
+
     ///
     /// Update the [camera] projection
     ///
-    void _refreshCameraProjection()
+    void refreshCameraProjection()
     {
         camera.updateProjectionMatrix();
     }
