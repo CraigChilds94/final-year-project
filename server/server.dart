@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:convert';
 
+List<WebSocket> sockets = new List();
+
 ///
 /// The main for the server program
 ///
@@ -44,11 +46,14 @@ void serveRequest(request)
 /// Handle incoming data from a [socket]
 ///
 void handleWebSocketInbound(WebSocket socket)
-{
+{   
+    sockets.add(socket);
     print('Client connected!');
     socket.listen((String s) {
         if(s == "givemecubes") {
-            socket.add("makecube:0,0,0");
+            sockets.forEach((s) {
+                s.add("makecube:0,100,0");
+            });
         } else {
             socket.add("I don't know what you mean?");
         }
