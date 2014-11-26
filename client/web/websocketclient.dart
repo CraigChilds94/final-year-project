@@ -1,9 +1,9 @@
 import 'dart:html';
 import 'dart:async';
-
+import 'dart:math';
 
 void main() {
-    WebSocketClient client = new WebSocketClient("127.0.0.1", 1234);    
+    WebSocketClient client = new WebSocketClient("127.0.0.1", 1234);   
 }
 
 /**
@@ -42,7 +42,14 @@ class WebSocketClient {
         ws.onMessage.listen((e) {
             onMessage(e.data);
         });
+        
         ws.send("Hello server");
+        
+        for(int i = 0; i < 1000; i++) {
+            new Timer(new Duration(milliseconds: new Random().nextInt(100)), () {
+                ws.send("Hello server");
+            });
+        }
     }
     
     /**
