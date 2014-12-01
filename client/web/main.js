@@ -1,125 +1,113 @@
-/**
- * This is the Javascript file used for testing
- */
-var Client = (function(id, socket, calculateAverage) {
-
-    // Bind some events to the socket
-    socket.onopen = onConnect;
-    socket.onclose = onDisconnect;
-    socket.onmessage = onMessage;
-
-    var counter = 0;
-    var track = [];
-    var times = [];
-    var average = 0;
-    var stdDeviation = 0;
-
-    /**
-     * Called when a connection to the socket
-     * has been created.
-     */
-    function onConnect() {
-        // console.log('Connected to the server : ' + id);
-        counter = 0;
-        var interval = setInterval(function() {
-
-            if(counter > 9) {
-                clearInterval(interval);
-                average = calculateAverage(times);
-                stdDeviation = standardDeviation(times);
-                document.write("Client -- " + id + " : delay (ms) = " + average + " with stddev of " + stdDeviation + "<br>");
-                socket.close();
-                return;
-            }
-
-            var m = 'message_' + counter + ':abcdefghijklmnopqrstuvwxyz0123456789';
-            var key = 'message_' + (counter++);
-            sendMessage(m);
-            track[key] = new Date().getTime();
-
-        }, 100);
-    }
-
-    /**
-     * Called when the connection between
-     * the client and the server has
-     * been closed.
-     */
-    function onDisconnect() {
-        // console.log('Your connection to the server has been closed : ' + id);
-    }
-
-    /**
-     * Called when a message has been received
-     * from the server.
-     *
-     * @param  String  message  The message
-     */
-    function onMessage(message) {
-        // Calculate time diff between request and response
-        times.push(track[message.data] - new Date().getTime());
-    }
-
-    /**
-     * Calculate the average value using the array
-     * of times.
-     *
-     * @param Array  times  An array of times
-     * @return Int  The average of all values in the array
-     */
-    function calculateAverage(times) {
-        var sum = 0;
-        for(var i = 0; i < times.length; i++) {
-            sum += Math.abs(times[i]);
-        }
-        return sum / times.length;
-    }
-
-    /**
-     * Get the standard deviation for the averages
-     *
-     * @param Array  times  An array of times
-     * @return Int  The Std Deviation
-     */
-    function standardDeviation(times) {
-        var vals = [];
-        for(var i = 0; i < times.length; i++) {
-            var diff = times[i] - average;
-            var val = diff*diff;
-            vals[i] = val;
-        }
-
-        var valsum = 0;
-        for(var j = 0; j < vals.length; j++) {
-            valsum += vals[j];
-        }
-
-        return Math.sqrt(valsum / vals.length / 10);
-    }
-
-    /**
-     * Send a message to the server via the socket
-     *
-     * @param String  message  The message to send
-     */
-    function sendMessage(message) {
-        socket.send(message);
-    }
-
-    // Give back the data we want access to
-    return {
-        average : average,
-        standardDeviation : stdDeviation
-    };
-});
+// Let's do some chart stuff
+var ctx = document.getElementById('chart').getContext('2d');
+Chart.defaults.global.scaleIntegersOnly = false;
+Chart.defaults.global.scaleSteps = 0.01;
+Chart.defaults.global.scaleStartValue = 0;
+var chart = new Chart(ctx);
 
 // init empty arrays to store results
 var averages = [];
 var stdDeviation = [];
 
+// Some test variables
+var numClients = 100;
+var numClientsFinished = 0;
+
 // Create 100 clients, grab the results
-for(var i = 0; i < 100; i++) {
-    var client = Client(i, new WebSocket('ws://127.0.0.1:1234'));
-    averages[i] = client.average;
-    stdDeviation[i] = client.standardDeviation;
+for(var i = 0; i < numClients; i++) {
+    var client = Client(i, new WebSocket('ws://127.0.0.1:1234'), function(avg, stddev) {
+
+        averages.push(avg);
+        stdDeviation.push(stddev);
+        numClientsFinished++;
+
+        if(numClientsFinished == numClients) {
+            onFinish();
+        }
+    });
+}
+
+// while(numClientsFinished < numClients){}
+
+// onFinish();
+/**
+ * Called when the tests have finished
+ */
+function onFinish() {
+
+    // Heres all the data for the chart
+    var data = {
+        labels: generateLabels(numClientsFinished),
+        datasets: [
+            {
+                label: 'Averages',
+                fillColor: "rgba(255,73,71,0.2)",
+                strokeColor: "rgba(255,73,71,1)",
+                pointColor: "rgba(255,73,71,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(255, 73, 71, 1)",
+                data: averages
+            },
+            {
+                label: 'Standard deviation',
+                fillColor: "rgba(67, 96, 232,0.2)",
+                strokeColor: "rgba(67, 96, 232,1)",
+                pointColor: "rgba(67, 96, 232,1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(67, 96, 232,1)",
+                data: stdDeviation
+            }
+        ]
+    };
+
+    // Here are the options for the chart
+    var options = {};
+
+    // Draw a legend with the data
+    legend(document.getElementById("legend"), data);
+
+    // With the data draw a line chart
+    chart.Line(data, options);
+}
+
+/**
+ * Generate the number labels given an upper bound,
+ * used for labelling the graph.
+ *
+ * @param Int upper The number of labels
+ * @return Array an array of numbers, ie. the labels
+ */
+function generateLabels(upper) {
+    var nums = [];
+    for(var i = 1; i <= upper; i++) {
+        nums.push(i);
+    }
+    return nums;
+}
+
+/**
+ * Generate a legend for chart JS data
+ * from https://github.com/bebraw/Chart.js.legend/blob/master/src/legend.js
+ */
+function legend(parent, data) {
+    parent.className = 'legend';
+    var datas = data.hasOwnProperty('datasets') ? data.datasets : data;
+
+    // remove possible children of the parent
+    while(parent.hasChildNodes()) {
+        parent.removeChild(parent.lastChild);
+    }
+
+    datas.forEach(function(d) {
+        var title = document.createElement('span');
+        title.className = 'title';
+        title.style.borderColor = d.hasOwnProperty('strokeColor') ? d.strokeColor : d.color;
+        title.style.borderStyle = 'solid';
+        parent.appendChild(title);
+
+        var text = document.createTextNode(d.label);
+        title.appendChild(text);
+    });
 }
