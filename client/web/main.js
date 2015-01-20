@@ -1,25 +1,31 @@
 // Let's do some chart stuff
 var ctx = document.getElementById('chart').getContext('2d');
-Chart.defaults.global.scaleIntegersOnly = false;
-Chart.defaults.global.scaleSteps = 0.01;
-Chart.defaults.global.scaleStartValue = 0;
+Chart.defaults.Line.scaleIntegersOnly = false;
+Chart.defaults.Line.scaleSteps = 0.01;
+Chart.defaults.Line.scaleStartValue = 0;
 var chart = new Chart(ctx);
 
 // init empty arrays to store results
 var averages = [];
 var stdDeviation = [];
+var maximums = [];
+var minimums = [];
 
 // Some test variables
-var numClients = 100;
+var numClients = 20;
 var numClientsFinished = 0;
 
 // Create 100 clients, grab the results
 for(var i = 0; i < numClients; i++) {
-    var client = Client(i, new WebSocket('ws://127.0.0.1:1234'), function(avg, stddev) {
+    var client = Client(i, new WebSocket('ws://127.0.0.1:1234'), function(avg, stddev, min, max) {
 
         averages.push(avg);
+        maximums.push(max);
+        minimums.push(min);
         stdDeviation.push(stddev);
         numClientsFinished++;
+
+        // console.log(max + " --- " + min);
 
         if(numClientsFinished == numClients) {
             onFinish();
@@ -58,6 +64,26 @@ function onFinish() {
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(67, 96, 232,1)",
                 data: stdDeviation
+            },
+            {
+                label: 'Maximum response',
+                fillColor: "rgba(232, 176, 34, 0.2)",
+                strokeColor: "rgba(232, 176, 34, 1)",
+                pointColor: "rgba(232, 176, 34, 1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(232, 176, 34, 1)",
+                data: maximums
+            },
+            {
+                label: 'Minimum response',
+                fillColor: "rgba(15,255, 165, 0.2)",
+                strokeColor: "rgba(15,255, 165, 1)",
+                pointColor: "rgba(15,255, 165, 1)",
+                pointStrokeColor: "#fff",
+                pointHighlightFill: "#fff",
+                pointHighlightStroke: "rgba(15,255, 165, 1)",
+                data: minimums
             }
         ]
     };
@@ -69,7 +95,7 @@ function onFinish() {
     legend(document.getElementById("legend"), data);
 
     // With the data draw a line chart
-    chart.Line(data, options);
+    chart.Bar(data, options);
 }
 
 /**
