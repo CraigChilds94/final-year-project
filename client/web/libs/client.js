@@ -14,7 +14,9 @@ var Client = (function(id, socket, callback) {
     var times = [];
     var average = 0;
     var stdDeviation = 0;
-    var numRequests = 10;
+    var numRequests = 100;
+    var max = -1;
+    var min = 999999;
 
     /**
     * Called when a connection to the socket
@@ -31,7 +33,7 @@ var Client = (function(id, socket, callback) {
                 stdDeviation = standardDeviation(times);
                 // console.log("C #" + id + ":delay(ms) " + average + " - stddev " + stdDeviation + "<br>");
                 socket.close();
-                callback(average, stdDeviation);
+                callback(average, stdDeviation, min, max);
                 return;
             }
 
@@ -61,7 +63,8 @@ var Client = (function(id, socket, callback) {
     */
     function onMessage(message) {
         // Calculate time diff between request and response
-        times.push(track[message.data] - new Date().getTime());
+        var diff = new Date().getTime() - track[message.data];
+        times.push(diff);
     }
 
     /**
@@ -82,6 +85,14 @@ var Client = (function(id, socket, callback) {
     function calculateAverage(times) {
         var sum = 0;
         for(var i = 0; i < times.length; i++) {
+            if(times[i] < min) {
+                min = times[i];
+            }
+
+            if(times[i] > max) {
+                max = times[i];
+            }
+
             sum += Math.abs(times[i]);
         }
         return sum / times.length;
@@ -106,7 +117,7 @@ var Client = (function(id, socket, callback) {
             valsum += vals[j];
         }
 
-        return Math.sqrt(valsum / vals.length / 10);
+        return Math.sqrt(valsum / vals.length);
     }
 
     /**
