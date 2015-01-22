@@ -1,89 +1,61 @@
 // Let's do some chart stuff
 var ctx = document.getElementById('chart').getContext('2d');
-Chart.defaults.Line.scaleIntegersOnly = false;
-Chart.defaults.Line.scaleSteps = 0.01;
-Chart.defaults.Line.scaleStartValue = 0;
 var chart = new Chart(ctx);
+var lineChart = null;
+var i = 1;
+var maxToShow = 10;
 
 // init empty arrays to store results
-var averages = [];
+var times = [];
 var stdDeviation = [];
 var maximums = [];
 var minimums = [];
 
-// Some test variables
-var numClients = 20;
-var numClientsFinished = 0;
+initChart();
 
-// Create 100 clients, grab the results
-for(var i = 0; i < numClients; i++) {
-    var client = Client(i, new WebSocket('ws://127.0.0.1:1234'), function(avg, stddev, min, max) {
+// Create a client, grab the results
+var client = Client(1, new WebSocket('ws://127.0.0.1:1234'), function(time) {
 
-        averages.push(avg);
-        maximums.push(max);
-        minimums.push(min);
-        stdDeviation.push(stddev);
-        numClientsFinished++;
+    times.push(time);
+    update(time);
 
-        // console.log(max + " --- " + min);
+});
 
-        if(numClientsFinished == numClients) {
-            onFinish();
-        }
-    });
+/**
+ * Update the graph with the times data
+ */
+function update(time) {
+
+    lineChart.addData([time], i);
+
+    if(i >= maxToShow) {
+        lineChart.removeData();
+    }
+
+    lineChart.update();
+
+    i++;
 }
 
-// while(numClientsFinished < numClients){}
-
-// onFinish();
 /**
- * Called when the tests have finished
+ * Called when drawing the chart for
+ * the first time
  */
-function onFinish() {
+function initChart() {
 
     // Heres all the data for the chart
     var data = {
-        labels: generateLabels(numClientsFinished),
+        labels: [0],
         datasets: [
             {
-                label: 'Averages',
+                label: 'Response Time (ms) every second',
                 fillColor: "rgba(255,73,71,0.2)",
                 strokeColor: "rgba(255,73,71,1)",
                 pointColor: "rgba(255,73,71,1)",
                 pointStrokeColor: "#fff",
                 pointHighlightFill: "#fff",
                 pointHighlightStroke: "rgba(255, 73, 71, 1)",
-                data: averages
-            },
-            {
-                label: 'Standard deviation',
-                fillColor: "rgba(67, 96, 232,0.2)",
-                strokeColor: "rgba(67, 96, 232,1)",
-                pointColor: "rgba(67, 96, 232,1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(67, 96, 232,1)",
-                data: stdDeviation
-            },
-            {
-                label: 'Maximum response',
-                fillColor: "rgba(232, 176, 34, 0.2)",
-                strokeColor: "rgba(232, 176, 34, 1)",
-                pointColor: "rgba(232, 176, 34, 1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(232, 176, 34, 1)",
-                data: maximums
-            },
-            {
-                label: 'Minimum response',
-                fillColor: "rgba(15,255, 165, 0.2)",
-                strokeColor: "rgba(15,255, 165, 1)",
-                pointColor: "rgba(15,255, 165, 1)",
-                pointStrokeColor: "#fff",
-                pointHighlightFill: "#fff",
-                pointHighlightStroke: "rgba(15,255, 165, 1)",
-                data: minimums
+                data: [0]
             }
         ]
     };
@@ -91,11 +63,11 @@ function onFinish() {
     // Here are the options for the chart
     var options = {};
 
+    // With the data draw a line chart
+    lineChart = chart.Line(data, options);
+
     // Draw a legend with the data
     legend(document.getElementById("legend"), data);
-
-    // With the data draw a line chart
-    chart.Bar(data, options);
 }
 
 /**
@@ -136,4 +108,49 @@ function legend(parent, data) {
         var text = document.createTextNode(d.label);
         title.appendChild(text);
     });
+}
+
+/**
+* Calculate the average value using the array
+* of times.
+*
+* @param Array  times  An array of times
+* @return Int  The average of all values in the array
+*/
+function calculateAverage(times) {
+    var sum = 0;
+    for(var i = 0; i < times.length; i++) {
+        if(times[i] < min) {
+            min = times[i];
+        }
+
+        if(times[i] > max) {
+            max = times[i];
+        }
+
+        sum += Math.abs(times[i]);
+    }
+    return sum / times.length;
+}
+
+/**
+* Get the standard deviation for the averages
+*
+* @param Array  times  An array of times
+* @return Int  The Std Deviation
+*/
+function standardDeviation(times) {
+    var vals = [];
+    for(var i = 0; i < times.length; i++) {
+        var diff = times[i] - average;
+        var val = diff*diff;
+        vals[i] = val;
+    }
+
+    var valsum = 0;
+    for(var j = 0; j < vals.length; j++) {
+        valsum += vals[j];
+    }
+
+    return Math.sqrt(valsum / vals.length);
 }

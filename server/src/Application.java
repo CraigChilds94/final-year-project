@@ -6,7 +6,6 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  *
@@ -26,7 +25,7 @@ public class Application extends WebSocketServer {
         try {
 
             Application app = new Application();
-            app.start();
+            app.run();
             System.out.println("Server started");
 
         } catch(UnknownHostException e) {
@@ -40,7 +39,7 @@ public class Application extends WebSocketServer {
      * @throws UnknownHostException
      */
     public Application() throws UnknownHostException {
-        super(new InetSocketAddress("127.0.0.1", 1234));
+        super(new InetSocketAddress("127.0.0.1", 1234), 10);
         clients = new HashMap<WebSocket, Integer>();
         System.out.println(this.getAddress());
     }
@@ -54,7 +53,7 @@ public class Application extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
         clients.put(webSocket, ++(Application.counter));
-//        System.out.println("New connection with id : " + Application.counter);
+        System.out.println("New connection with id : " + Application.counter);
     }
 
     /**
