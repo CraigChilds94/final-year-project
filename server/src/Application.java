@@ -77,7 +77,6 @@ public class Application extends WebSocketServer {
     public void onMessage(WebSocket webSocket, String s) {
         String[] parts  = s.split("(:)");
         String key = parts[0];
-//        System.out.println(parts[0]);
         webSocket.send(key);
     }
 
