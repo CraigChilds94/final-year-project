@@ -14,6 +14,7 @@ var Client = (function(id, socket, callback) {
     var times = [];
     var average = 0;
     var stdDeviation = 0;
+
     // var numRequests = 100;
     var requestDelay = 1000;
     var max = -1;
