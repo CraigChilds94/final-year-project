@@ -1,22 +1,33 @@
 /**
  * This file contains all of the basic game code.
  */
-var ws = new WebSocket('ws://127.0.0.1:1234');
+var serverLocation = '127.0.0.1:1234';
+var ws = new WebSocket('ws://' + serverLocation);
 var client = Client(ws, Network.onConnect, Network.onMessage, Network.onError, Network.onDisconnect);
 
+// Store some game info
+var Game = {
+    viewWidth: 630,
+    viewHeight: 410
+};
+
 // Add renderer
-var renderer = new PIXI.WebGLRenderer(800, 600);
-document.body.appendChild(renderer.view);
+Game.renderer = new PIXI.WebGLRenderer(Game.viewWidth, Game.viewHeight);
+document.body.appendChild(Game.renderer.view);
+
+// Create a Game stage
+Game.stage = new PIXI.Stage();
 
 // Create game objects
-var player = new Player(PIXI, {}, client);
-var stage = new PIXI.Stage();
-stage.addChild(player.sprite);
+var player = new Player(PIXI, Game, client);
+player.setPosition(Game.viewWidth / 2, Game.viewHeight / 2);
+
+Game.stage.addChild(player.sprite);
 
 // Handle each frame
 requestAnimationFrame(update);
 function update() {
     player.update();
-    renderer.render(stage);
+    Game.renderer.render(Game.stage);
     requestAnimationFrame(update);
 }

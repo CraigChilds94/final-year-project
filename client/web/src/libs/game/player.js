@@ -15,14 +15,17 @@ var Player = (function(PIXI, world, client) {
 
     // Store the sprite details
     var sprite = new PIXI.Sprite(
-        new PIXI.Texture.fromImage("http://placekitten.com/g/200/200")
+        new PIXI.Texture.fromImage("http://placekitten.com/g/200/300")
     );
 
     /**
      * Update the player
      */
     function update() {
-        sprite.rotation += 0.01;
+        sprite.position.x = pos.x;
+        sprite.position.y = pos.y;
+        sprite.rotation += 0.1;
+        sprite.scale = {x: 0.5, y: 0.5};
     }
 
     /**

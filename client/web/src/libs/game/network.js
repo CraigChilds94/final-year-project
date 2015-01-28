@@ -8,7 +8,7 @@ var Network = {
      * Called when we connect to the socket
      */
     onConnect: function() {
-
+        console.log('Connected to ' + serverLocation);
     },
 
     /**
@@ -29,6 +29,6 @@ var Network = {
      * Called if we disconnect
      */
     onDisconnect: function() {
-
+        console.log('Disconnected from ' + serverLocation);
     }
 };
