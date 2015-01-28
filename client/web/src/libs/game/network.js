@@ -14,15 +14,17 @@ var Network = {
     /**
      * Called when we receive a message
      */
-    onMessage: function() {
-
+    onMessage: function(message) {
+        MessageBus.add(1, function() {
+            console.log(message);
+        });
     },
 
     /**
      * Called when an error occurs
      */
     onError: function() {
-
+        console.log('Something went wrong');
     },
 
     /**

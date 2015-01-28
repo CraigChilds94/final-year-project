@@ -13,10 +13,15 @@ var Player = (function(PIXI, world, client) {
         y: 0
     };
 
+    // Is this controlled by the current client?
+    var controlled = false;
+
     // Store the sprite details
     var sprite = new PIXI.Sprite(
         new PIXI.Texture.fromImage("http://placekitten.com/g/200/300")
     );
+
+    sprite.scale = {x: 0.5, y: 0.5};
 
     /**
      * Update the player
@@ -24,8 +29,6 @@ var Player = (function(PIXI, world, client) {
     function update() {
         sprite.position.x = pos.x;
         sprite.position.y = pos.y;
-        sprite.rotation += 0.1;
-        sprite.scale = {x: 0.5, y: 0.5};
     }
 
     /**
@@ -44,6 +47,7 @@ var Player = (function(PIXI, world, client) {
         position: pos,
         update: update,
         setPosition: setPosition,
-        sprite: sprite
+        sprite: sprite,
+        controlled: controlled
     };
 });

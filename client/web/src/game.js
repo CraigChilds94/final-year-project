@@ -2,6 +2,7 @@
  * This file contains all of the basic game code.
  */
 var serverLocation = '127.0.0.1:1234';
+var messageBus = new MessageBus();
 var ws = new WebSocket('ws://' + serverLocation);
 var client = Client(ws, Network.onConnect, Network.onMessage, Network.onError, Network.onDisconnect);
 
@@ -27,6 +28,7 @@ Game.stage.addChild(player.sprite);
 // Handle each frame
 requestAnimationFrame(update);
 function update() {
+    messageBus.process(function() {});
     player.update();
     Game.renderer.render(Game.stage);
     requestAnimationFrame(update);
