@@ -4,19 +4,24 @@
  */
 var Network = {
 
+    // Message id
+    id: 0,
+
     /**
      * Called when we connect to the socket
      */
     onConnect: function() {
         console.log('Connected to ' + serverLocation);
+        console.log(client);
+        client.send('Here is a message');
     },
 
     /**
      * Called when we receive a message
      */
     onMessage: function(message) {
-        MessageBus.add(1, function() {
-            console.log(message);
+        messageBus.add(Network.id++, function() {
+            return message;
         });
     },
 

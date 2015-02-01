@@ -3,13 +3,15 @@
  */
 var serverLocation = '127.0.0.1:1234';
 var messageBus = new MessageBus();
+var keyboard = new Keyboard();
 var ws = new WebSocket('ws://' + serverLocation);
 var client = Client(ws, Network.onConnect, Network.onMessage, Network.onError, Network.onDisconnect);
 
 // Store some game info
 var Game = {
-    viewWidth: 630,
-    viewHeight: 410
+    viewWidth:  630,
+    viewHeight: 410,
+    keyboard: keyboard
 };
 
 // Add renderer
@@ -23,12 +25,16 @@ Game.stage = new PIXI.Stage();
 var player = new Player(PIXI, Game, client);
 player.setPosition(Game.viewWidth / 2, Game.viewHeight / 2);
 
+// Add stuff to the stage
 Game.stage.addChild(player.sprite);
 
 // Handle each frame
 requestAnimationFrame(update);
 function update() {
-    messageBus.process(function() {});
+    Game.keyboard.bind();
+    messageBus.process(function(data) {
+        // console.log(data);
+    });
     player.update();
     Game.renderer.render(Game.stage);
     requestAnimationFrame(update);

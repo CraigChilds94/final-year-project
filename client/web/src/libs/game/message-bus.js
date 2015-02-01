@@ -1,6 +1,7 @@
 // A message bus datatype
 var MessageBus = (function() {
 
+    // We need somewhere to store the messages
     var messages = [];
 
     /**
@@ -38,11 +39,14 @@ var MessageBus = (function() {
      * @param Function Callback  Called when we consume a message
      */
     function process(callback) {
-        for(messageIndex in messages) {
-            var message = messages[messageIndex];
-            callback(message.consume());
+        if(messages.length < 1) {
+            callback(false);
+            return;
         }
-        callback(false);
+
+        for(messageIndex in messages) {
+            callback(consume());
+        }
     }
 
     /**
