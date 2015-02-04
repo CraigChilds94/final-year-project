@@ -56,6 +56,10 @@ var Player = (function(PIXI, world, client) {
     function update() {
         sprite.position.x += delta.x;
         sprite.position.y += delta.y;
+
+        if(client.isConnected()) {
+            client.send(JSON.stringify(delta));
+        }
     }
 
     /**

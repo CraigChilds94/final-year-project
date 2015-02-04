@@ -18,6 +18,13 @@ var Client = (function(socket, onConnect, onMessage, onError, onDisconnect) {
     socket.onerror = onError;
 
     /**
+     * Check if we're connected
+     */
+    function isConnected() {
+        return socket.readyState == 1;
+    }
+
+    /**
      * Close the connection to the server
      */
     function closeConnection() {
@@ -37,6 +44,7 @@ var Client = (function(socket, onConnect, onMessage, onError, onDisconnect) {
     return {
         send : sendMessage,
         close: closeConnection,
-        socket: socket
+        socket: socket,
+        isConnected: isConnected
     };
 });

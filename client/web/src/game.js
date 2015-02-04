@@ -33,7 +33,7 @@ requestAnimationFrame(update);
 function update() {
     Game.keyboard.bind();
     messageBus.process(function(data) {
-        // console.log(data);
+        console.log(data);
     });
     player.update();
     Game.renderer.render(Game.stage);

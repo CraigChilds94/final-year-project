@@ -75,9 +75,8 @@ public class Application extends WebSocketServer {
      */
     @Override
     public void onMessage(WebSocket webSocket, String s) {
-        String[] parts  = s.split("(:)");
-        String key = parts[0];
-        webSocket.send(key);
+        System.out.println(s);
+        webSocket.send(s);
     }
 
     /**
