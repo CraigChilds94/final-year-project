@@ -19,6 +19,8 @@ var Player = (function(PIXI, world, client) {
         y: 0
     };
 
+    var lastDelta = delta;
+
     // Is this controlled by the current client?
     var controlled = false;
 
@@ -27,28 +29,45 @@ var Player = (function(PIXI, world, client) {
         new PIXI.Texture.fromImage("http://placekitten.com/g/200/300")
     );
 
-    // Set the initial scale for the image
-    sprite.scale = {x: 0.5, y: 0.5};
+    /**
+     * Construct the player
+     */
+    function init() {
+        // Set the initial scale for the image
+        sprite.scale = {x: 0.5, y: 0.5};
 
-    // Bind keyup interaction
-    world.keyboard.addEventListener('keyup', function() {
-        setDelta(0, 0);
-    });
+        if(controlled) {
+            // Bind keyup interaction
+            world.keyboard.addEventListener('keyup', function() {
+                setDelta(0, 0);
+            });
 
-    // Bind keydown interaction
-    world.keyboard.addEventListener('keydown', function(e) {
-        e = e || window.event;
+            // Bind keydown interaction
+            world.keyboard.addEventListener('keydown', function(e) {
+                e = e || window.event;
 
-        if (e.keyCode == '38') {
-            setDelta(0, -1); // up
-        } else if (e.keyCode == '40') {
-            setDelta(0, 1); // down
-        } else if (e.keyCode == '37') {
-            setDelta(-1, 0); // left
-        } else if (e.keyCode == '39') {
-            setDelta(1, 0); // right
+                if (e.keyCode == '38') {
+                    setDelta(0, -1); // up
+                } else if (e.keyCode == '40') {
+                    setDelta(0, 1); // down
+                } else if (e.keyCode == '37') {
+                    setDelta(-1, 0); // left
+                } else if (e.keyCode == '39') {
+                    setDelta(1, 0); // right
+                }
+            });
         }
-    });
+    }
+
+    /**
+     * Set whether or not this player is controlled
+     * locally.
+     *
+     * @param Boolean boolean
+     */
+    function setControlled(boolean) {
+        controlled = boolean;
+    }
 
     /**
      * Update the player
@@ -57,7 +76,7 @@ var Player = (function(PIXI, world, client) {
         sprite.position.x += delta.x;
         sprite.position.y += delta.y;
 
-        if(client.isConnected()) {
+        if(client.isConnected() && JSON.stringify(delta) != lastDelta) {
             client.send(JSON.stringify(delta));
         }
     }
@@ -80,6 +99,7 @@ var Player = (function(PIXI, world, client) {
      * @param Float  y  The y position
      */
     function setDelta(x, y) {
+        lastDelta = JSON.stringify(delta);
         delta.x = x;
         delta.y = y;
     }
@@ -91,6 +111,7 @@ var Player = (function(PIXI, world, client) {
         sprite: sprite,
         setPosition: setPosition,
         setDelta: setDelta,
-        controlled: controlled
+        setControlled: setControlled,
+        init: init
     };
 });

@@ -24,6 +24,8 @@ Game.stage = new PIXI.Stage();
 // Create game objects
 var player = new Player(PIXI, Game, client);
 player.setPosition(Game.viewWidth / 2, Game.viewHeight / 2);
+player.setControlled(true);
+player.init();
 
 // Add stuff to the stage
 Game.stage.addChild(player.sprite);
