@@ -2,10 +2,7 @@
  * This file contains all of the basic game code.
  */
 var serverLocation = '127.0.0.1:1234';
-var messageBus = new MessageBus();
 var keyboard = new Keyboard();
-var ws = new WebSocket('ws://' + serverLocation);
-var client = Client(ws, Network.onConnect, Network.onMessage, Network.onError, Network.onDisconnect);
 
 // Store some game info
 var Game = {
@@ -13,6 +10,8 @@ var Game = {
     viewHeight: 410,
     keyboard: keyboard
 };
+
+var client = Client(new WebSocket('ws://' + serverLocation), Game);
 
 // Add renderer
 Game.renderer = new PIXI.WebGLRenderer(Game.viewWidth, Game.viewHeight);
@@ -27,6 +26,11 @@ player.setPosition(Game.viewWidth / 2, Game.viewHeight / 2);
 player.setControlled(true);
 player.init();
 
+// Keep track of any networked entities in the game
+// Add the player by default
+Game.entities = new EntityMap();
+Game.entities.add(player);
+
 // Add stuff to the stage
 Game.stage.addChild(player.sprite);
 
@@ -34,9 +38,6 @@ Game.stage.addChild(player.sprite);
 requestAnimationFrame(update);
 function update() {
     Game.keyboard.bind();
-    messageBus.process(function(data) {
-        console.log(data);
-    });
     player.update();
     Game.renderer.render(Game.stage);
     requestAnimationFrame(update);

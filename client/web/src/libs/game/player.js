@@ -18,7 +18,7 @@ var Player = (function(PIXI, world, client) {
         x: 0,
         y: 0
     };
-
+    var idle = true;
     var lastDelta = delta;
 
     // Is this controlled by the current client?
@@ -57,6 +57,22 @@ var Player = (function(PIXI, world, client) {
                 }
             });
         }
+
+        networkUpdate(500);
+    }
+
+    /**
+     * Handle the rate at which the network updates
+     * are sent to the server
+     *
+     * @param Integer rate
+     */
+    function networkUpdate(rate) {
+        setInterval(function() {
+            if(client.isConnected() && JSON.stringify(delta) != lastDelta && !idle) {
+                client.send(JSON.stringify(delta));
+            }
+        }, rate);
     }
 
     /**
@@ -75,10 +91,6 @@ var Player = (function(PIXI, world, client) {
     function update() {
         sprite.position.x += delta.x;
         sprite.position.y += delta.y;
-
-        if(client.isConnected() && JSON.stringify(delta) != lastDelta) {
-            client.send(JSON.stringify(delta));
-        }
     }
 
     /**
@@ -102,6 +114,21 @@ var Player = (function(PIXI, world, client) {
         lastDelta = JSON.stringify(delta);
         delta.x = x;
         delta.y = y;
+
+        if(delta.x == 0 && delta.y == 0) {
+            idle = true;
+        } else {
+            idle = false;
+        }
+    }
+
+    /**
+     * Handle an incoming message for this entity
+     *
+     * @param String data
+     */
+    function onMessage(data) {
+        console.log(data);
     }
 
     // Public methods and properties
@@ -112,6 +139,7 @@ var Player = (function(PIXI, world, client) {
         setPosition: setPosition,
         setDelta: setDelta,
         setControlled: setControlled,
-        init: init
+        init: init,
+        onMessage: onMessage
     };
 });

@@ -9,13 +9,51 @@
  * @param Function onError
  * @param Function onDisconnect
  */
-var Client = (function(socket, onConnect, onMessage, onError, onDisconnect) {
+var Client = (function(socket, Game) {
 
     // Bind some events to the socket
     socket.onopen = onConnect;
     socket.onclose = onDisconnect;
     socket.onmessage = onMessage;
     socket.onerror = onError;
+
+    /**
+     * Called when we connect to the server,
+     * if no connection made we need to
+     * try again.
+     */
+    function onConnect() {
+        console.log('Connected to the server');
+    }
+
+    /**
+     * Called when we disconnect from the
+     * server.
+     */
+    function onDisconnect() {
+        console.log('Disconnected from the server');
+    }
+
+    /**
+     * Called when we receive a message
+     * from the server
+     */
+    function onMessage(message) {
+        var entity = Game.entities.find('player');
+        if(entity != undefined) {
+            entity.onMessage(message);
+        }
+    }
+
+    /**
+     * Handle errors
+     *
+     * @param Mixed e
+     */
+    function onError(e) {
+        console.log('A problem was encountered');
+        console.log(e);
+    }
 
     /**
      * Check if we're connected
