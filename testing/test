@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# 1000 connections, 1000 messages, using message-gen as a generator
+# on 127.0.0.1:1234
+thor --amount 1000 --generator message-gen.js --messages 1000 ws://localhost:1234
