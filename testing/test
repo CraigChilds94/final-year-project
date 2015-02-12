@@ -2,4 +2,4 @@
 
 # 4 workers, 1000 connections, 1000 messages, using message-gen as a generator
 # on 127.0.0.1:1234, put results in "test_1_results.txt"
-thor --workers 4 --amount 1000 --generator message-gen.js --messages 1000 ws://localhost:1234 > results/test_1_results.txt
+thor --workers 4 --amount 1000 --generator message-gen.js --messages 1 ws://localhost:1234 > results/test_1_results.txt

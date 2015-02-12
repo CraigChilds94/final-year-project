@@ -5,9 +5,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -16,15 +14,25 @@ import java.util.UUID;
  */
 public class GameServer extends WebSocketServer {
 
-    private int decoders = 10; // How many decoders are being used
-    private HashMap<WebSocket, Integer> clients; // Where we store refs to clients
+    public static HashMap<WebSocket, Integer> clients; // Where we store refs to clients
+
+    /**
+     * Application main
+     *
+     * @param args CMD Args
+     */
+    public static void main(String[] args)
+    {
+        GameServer gs = new GameServer();
+        gs.run();
+    }
 
     /**
      * Construct a new Game Server
      */
     public GameServer()
     {
-        super(new InetSocketAddress("127.0.0.1", 1234), decoders);
+        super(new InetSocketAddress("127.0.0.1", 1234), 10);
         clients = new HashMap<WebSocket, Integer>();
         System.out.println("The server is running on: " + this.getAddress());
     }
@@ -37,13 +45,14 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake)
     {
-        // Generate client UID
-        int id = UUID.randomUUID();
+        // Generate client UID, we'll just use 32-bit ints so we'll get
+        // the hashcode of it instead
+        int id = UUID.randomUUID().hashCode();
 
         // Put client in a Map
         clients.put(webSocket, id);
 
-        // Build a new connectd mesage and send it to the client
+        // Build a new connected message and send it to the client
         Message connected = new Message(Message.connection, id, -1, "");
         webSocket.send(MessageHandler.build(connected));
     }
@@ -59,10 +68,10 @@ public class GameServer extends WebSocketServer {
     public void onClose(WebSocket webSocket, int i, String s, boolean b)
     {
         // Remove client from refs
-        clients.pop(webSocket);
+        clients.remove(webSocket);
 
         // Tell clients about closed connection
-        System.out.println("Connection closed");
+//        System.out.println("Connection closed");
     }
 
     /**
@@ -73,21 +82,18 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket webSocket, String s)
     {
+
+        System.out.println(s);
+
         // Get a message and parse it
         Message message = MessageHandler.parse(s);
 
-        // Work out what response we give
-        Message[] messages = MessageHandler.process(message);
+        // Work out what response we give to who
+        WebSocket[] sockets = MessageHandler.process(message);
 
         // Send it out to any required recipients
-        for(Message response : messages) {
-
-            // Grab the recipients websocket
-            int id = response.getRecipient();
-            WebSocket socket = clients.get(id);
-
-            // Send the message to them
-            socket.send(MessageHandler.build(response));
+        for(WebSocket socket : sockets) {
+            socket.send(MessageHandler.build(message));
         }
     }
 

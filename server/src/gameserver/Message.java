@@ -6,8 +6,8 @@ package gameserver;
  */
 public class Message {
 
-    public static connection = 100, // Represents a new connection msg
-                  moveUpdate = 200; // Represents an update msg
+    public static int connection = 100, // Represents a new connection msg
+                      moveUpdate = 200; // Represents an update msg
 
     private int action,     // Integer
                 clientID,   // ID from client

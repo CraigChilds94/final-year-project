@@ -9,14 +9,7 @@
  * @public
  */
 exports.utf8 = function utf(size, fn) {
-  var key = 'utf8::'+ size, cached = cache[key];
-  var msg = "Boo";
-
-  // We have a cached version of this size, return that instead.
-  if (cached) return fn(msg, cached);
-
-  cached = cache[key] = new Buffer(size).toString('utf-8');
-  fn(msg, cached);
+  fn(null, "Hello");
 };
 
 /**
