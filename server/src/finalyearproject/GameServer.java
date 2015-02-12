@@ -20,6 +20,15 @@ public class GameServer extends WebSocketServer {
     private HashMap<WebSocket, Integer> clients; // Where we store refs to clients
 
     /**
+     * Main Method
+     */
+    public static void main(String[] args)
+    {
+        GameServer server = new GameServer();
+        server.run();
+    }
+
+    /**
      * Construct a new Game Server
      */
     public GameServer()
