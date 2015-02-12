@@ -70,7 +70,14 @@ var Player = (function(PIXI, world, client) {
     function networkUpdate(rate) {
         setInterval(function() {
             if(client.isConnected() && JSON.stringify(delta) != lastDelta && !idle) {
-                client.send(JSON.stringify(delta));
+
+                var msg = Messages.build(Messages.types.moveUpdate, {
+                    myID: Time.now(),
+                    body: JSON.stringify(delta)
+                });
+
+                client.send(msg);
+                
             }
         }, rate);
     }
