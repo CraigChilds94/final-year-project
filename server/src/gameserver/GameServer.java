@@ -82,9 +82,6 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket webSocket, String s)
     {
-
-        System.out.println(s);
-
         // Get a message and parse it
         Message message = MessageHandler.parse(s);
 

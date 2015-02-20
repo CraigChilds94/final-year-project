@@ -9,7 +9,7 @@
  * @public
  */
 exports.utf8 = function utf(size, fn) {
-  fn(null, "Hello");
+  fn(null, "100\n1214\n2132312\n\nHello");
 };
 
 /**

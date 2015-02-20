@@ -50,10 +50,26 @@ public class MessageHandler {
      */
     public static Message parse(String messageData)
     {
-        int action = 1;
-        int clientID = 2;
-        int recipient = 3;
-        String body = messageData;
+        // Split by new line
+        String[] messageParts = messageData.split("\n");
+
+        // Assume first line is the action
+        int action = Integer.parseInt(messageParts[0]);
+
+        // And second line is the client
+        int clientID = Integer.parseInt(messageParts[1]);
+
+        // Set default for recipient
+        int recipient = -1;
+
+        // If the 3rd line is not a new line
+        if(messageParts[2] != "\n") {
+            // We assume it's the recipient ID
+            recipient = Integer.parseInt(messageParts[2]);
+        }
+
+        // The last part is always the message body
+        String body = messageParts[messageParts.length - 1];
         return new Message(action, clientID, recipient, body);
     }
 
