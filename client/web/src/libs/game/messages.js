@@ -23,19 +23,7 @@ var Messages = {
      * @param Object data The data to be sent
      */
     build: function(id, data) {
-        var messageAction = 'id:' + id + '\n';
-        var messageBody = '\n' + data.body + '\n';
-        var messageRecipient = data.recipient;
-        var messageClientID = data.myID + '\n';
-
-        var message = messageAction + messageClientID;
-
-        if(messageRecipient != undefined) {
-            message += messageRecipient + '\n';
-        }
-
-        message += messageBody;
-        return message;
+        return new Message(data.action, id, data.recipient, data.body);
     }
 };
 

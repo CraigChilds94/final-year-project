@@ -76,8 +76,8 @@ var Player = (function(PIXI, world, client) {
                     body: JSON.stringify(delta)
                 });
 
-                client.send(msg);
-                
+                client.send(msg.toString());
+
             }
         }, rate);
     }
