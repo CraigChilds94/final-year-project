@@ -32,7 +32,8 @@ public class GameServer extends WebSocketServer {
      */
     public GameServer()
     {
-        super(new InetSocketAddress("127.0.0.1", 1234), 10);
+        // Address and number of threads to spawn
+        super(new InetSocketAddress("127.0.0.1", 1234), 8);
         clients = new HashMap<WebSocket, Integer>();
         System.out.println("The server is running on: " + this.getAddress());
     }
