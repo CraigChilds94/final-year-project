@@ -21,6 +21,7 @@ var Messages = {
      *
      * @param Integer id Type of message
      * @param Object data The data to be sent
+     * @return Message The message object
      */
     build: function(id, data) {
         return new Message(data.action, id, data.recipient, data.body);
