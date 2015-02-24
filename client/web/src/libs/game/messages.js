@@ -52,6 +52,7 @@ var Message = (function(act, ID, rec, b) {
 
     /**
      * Getter for the action
+     *
      * @return int action
      */
     function getAction() {
@@ -76,6 +77,7 @@ var Message = (function(act, ID, rec, b) {
 
     /**
      * Getter for the body
+     *
      * @return string The body of the message
      */
     function getBody() {
@@ -85,6 +87,7 @@ var Message = (function(act, ID, rec, b) {
     /**
      * Mimic java to string method
      * for easy debugging.
+     *
      * @return string The string representation of this object
      */
     function toString() {
