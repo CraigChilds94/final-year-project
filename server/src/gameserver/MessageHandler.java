@@ -95,12 +95,9 @@ public class MessageHandler {
                     sockets.add(socket);
                 }
             }
-
-            return (WebSocket[]) sockets.toArray();
-
         }
 
-        return new WebSocket[0];
+        return (WebSocket[]) sockets.toArray();
     }
 
 }

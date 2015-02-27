@@ -1,0 +1,90 @@
+#!/usr/bin/php
+<?php
+
+// Put all args in $_GET
+// e.g. arg =>     name=value
+parse_str(implode('&', array_slice($argv, 1)), $_GET);
+
+// Default name for test folder
+$testName = 'test_' . date("d_m_Y");
+
+// Get the test name
+if(isset($_GET['name'])) {
+    $testName = $_GET['name'];
+}
+
+// Where is the config file?
+$configFile = $testName . '/config.json';
+
+// Grab the correct configuration file
+$config = grab_json_file($configFile);
+if(!$config) {
+    $config = grab_json_file('default_config.json');
+} else {
+    die("You must have a valid, readable config file specified.");
+}
+
+echo "Using config $configFile";
+var_dump($config);
+
+// Grab the values from the config
+$workers = get_value('workers', $config, 1);
+$clientNum = get_value('client_count', $config, 1);
+$generatorFile = get_value('generator_file', $config, 'generator.js');
+$messageCount = get_value('message_count', $config, 1);
+$uri = get_value('uri', $config, 'ws://localhost:4848');
+$outputFile = $testName . '/' . get_value('output_file', $config, 'results.txt');
+$testCount = get_value('test_count', $config, 1);
+
+$execution = false;
+for($i = 0; $i < $testCount; $i++) {
+    if($testCount > 1) {
+        $output = $i . '_' . $outputFile;
+    } else {
+        $output = $outputFile;
+    }
+
+    // Build the command string
+    $command = "thor --workers $workers --amount $clientNum --generator $generatorFile --messages $messageCount $uri > $output";
+
+    // Execute the command
+    echo "Running command:\n$command";
+    $execution = exec(escapeshellcmd($command));
+}
+
+if($execution) die("Testing finished");
+
+/**
+ * =======================
+ * 	  Helper functions
+ * =======================
+ */
+
+/**
+ * Get a value from an array, with a default value
+ * @param  String $key
+ * @param  Array $array
+ * @param  Mixed $default The default value
+ * @return Mixed The value of the key/array instance
+ */
+function get_value($key, $array, $default = false) {
+    if(isset($array->$key)) {
+        return $array->$key;
+    }
+
+    return $default;
+}
+
+/**
+ * Given a path to a json file: grab it and decode it
+ *
+ * @param  String $file
+ * @return Array
+ */
+function grab_json_file($file) {
+    if(file_exists($file)) {
+        return json_decode(file_get_contents($file));
+    }
+
+    return false;
+}

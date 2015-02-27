@@ -4,6 +4,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.UUID;
@@ -16,25 +17,37 @@ public class GameServer extends WebSocketServer {
 
     public static HashMap<WebSocket, Integer> clients; // Where we store refs to clients
 
+
     /**
      * Application main
      *
      * @param args CMD Args
      */
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IOException {
         GameServer gs = new GameServer();
         gs.run();
+
+
+        // If we pass an argument, use it as the log file
+        if(args.length > 1) {
+            if(!args[1].equals("")) {
+                SystemMonitor.logFile = args[1];
+            }
+        }
     }
 
     /**
      * Construct a new Game Server
      */
-    public GameServer()
-    {
+    public GameServer() throws IOException {
         // Address and number of threads to spawn
         super(new InetSocketAddress("127.0.0.1", 1234), 8);
         clients = new HashMap<WebSocket, Integer>();
+
+        // Run some system monitoring
+        Thread t = new Thread(new SystemMonitor());
+        t.start();
+
         System.out.println("The server is running on: " + this.getAddress());
     }
 
@@ -68,11 +81,18 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b)
     {
-        // Remove client from refs
+        // Grab the client
+        int id = clients.get(webSocket);
+
+        // Build the clientDisconnect message
+        Message message = new Message(Message.clientDisconnect, id, -1, "");
+
+        // Remove the client from the list of disconnections
         clients.remove(webSocket);
 
-        // Tell clients about closed connection
-//        System.out.println("Connection closed");
+        // Send
+        WebSocket[] sockets = MessageHandler.process(message);
+        this.broadcast(sockets, message);
     }
 
     /**
@@ -89,10 +109,7 @@ public class GameServer extends WebSocketServer {
         // Work out what response we give to who
         WebSocket[] sockets = MessageHandler.process(message);
 
-        // Send it out to any required recipients
-        for(WebSocket socket : sockets) {
-            socket.send(MessageHandler.build(message));
-        }
+        this.broadcast(sockets, message);
     }
 
     /**
@@ -106,4 +123,16 @@ public class GameServer extends WebSocketServer {
         System.out.println(e);
     }
 
+    /**
+     * Broadcast a message to a list of sockets
+     * @param sockets
+     * @param message
+     */
+    public void broadcast(WebSocket[] sockets, Message message) {
+
+        // Send it out to any required recipients
+        for(WebSocket socket : sockets) {
+            socket.send(MessageHandler.build(message));
+        }
+    }
 }

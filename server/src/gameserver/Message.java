@@ -7,7 +7,9 @@ package gameserver;
 public class Message {
 
     public static final int connection = 100, // Represents a new connection msg
-            moveUpdate = 200; // Represents an update msg
+                            disconnect = 101, // When we need to tell a client to disconnect
+                            clientDisconnect = 102, // Represents a client disconnection
+                            moveUpdate = 200; // Represents an update msg
 
     private int action,     // Integer
             clientID,   // ID from client
