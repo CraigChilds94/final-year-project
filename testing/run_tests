@@ -16,7 +16,7 @@ if(isset($_GET['name'])) {
 // Where is the config file?
 $configFile = $testName . '/config.json';
 
-echo "Reading config $configFile";
+echo "Reading config $configFile \n";
 
 // Grab the correct configuration file
 $config = grab_json_file($configFile);
@@ -25,7 +25,7 @@ if(!$config) {
     $config = grab_json_file('default_config.json');
 }
 
-echo "Using config $configFile";
+echo "Using config $configFile \n";
 
 // Grab the values from the config
 $workers = get_value('workers', $config, 1);
@@ -51,7 +51,7 @@ for($i = 0; $i < $testCount; $i++) {
     $command = "thor --workers $workers --amount $clientNum --generator $generatorFile --messages $messageCount $uri > $output";
 
     // Execute the command
-    echo "Running command:\n$command";
+    echo "\n Running command:\n$command";
     $execution = exec(escapeshellcmd($command));
     exec('sleep 5');
 }

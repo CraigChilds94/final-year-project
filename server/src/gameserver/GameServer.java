@@ -42,7 +42,7 @@ public class GameServer extends WebSocketServer {
      */
     public GameServer() throws IOException {
         // Address and number of threads to spawn
-        super(new InetSocketAddress(1234), 8);
+        super(new InetSocketAddress("178.62.123.157", 1234), 8);
         clients = new HashMap<WebSocket, Integer>();
 
         // Run some system monitoring
