@@ -25,10 +25,12 @@ public class GameServer extends WebSocketServer {
      */
     public static void main(String[] args) throws IOException {
         // If we pass an argument, use it as the log file
-        if(args.length > 1) {
-            if(!args[1].equals("")) {
-                SystemMonitor.logFile = args[1];
+        if(args.length > 0) {
+            if(!args[0].equals("")) {
+                SystemMonitor.logFile = args[0];
             }
+        } else {
+            SystemMonitor.logFile = SystemMonitor.logFileName();
         }
 
         GameServer gs = new GameServer();

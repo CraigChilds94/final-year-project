@@ -23,7 +23,6 @@ public class SystemMonitor implements Runnable {
     public static String logFile = "log.csv";
 
     public SystemMonitor() throws IOException {
-        logFile = logFileName();
         systemMonitor = new JavaSysMon();
         running = true;
     }
