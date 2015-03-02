@@ -33,7 +33,7 @@ $clientNum = get_value('client_count', $config, 1);
 $generatorFile = get_value('generator_file', $config, 'generator.js');
 $messageCount = get_value('message_count', $config, 1);
 $uri = get_value('uri', $config, 'ws://localhost:4848');
-$outputFile = $testName . '/' . get_value('output_file', $config, 'results.txt');
+$outputFile = get_value('output_file', $config, 'results.txt');
 $testCount = get_value('test_count', $config, 1);
 
 $execution = false;
@@ -43,6 +43,9 @@ for($i = 0; $i < $testCount; $i++) {
     } else {
         $output = $outputFile;
     }
+
+    // Add in the test path
+    $output = $testName . '/' . $output;
 
     // Build the command string
     $command = "thor --workers $workers --amount $clientNum --generator $generatorFile --messages $messageCount $uri > $output";
