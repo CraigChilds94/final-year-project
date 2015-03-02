@@ -16,16 +16,16 @@ if(isset($_GET['name'])) {
 // Where is the config file?
 $configFile = $testName . '/config.json';
 
+echo "Reading config $configFile";
+
 // Grab the correct configuration file
 $config = grab_json_file($configFile);
+
 if(!$config) {
     $config = grab_json_file('default_config.json');
-} else {
-    die("You must have a valid, readable config file specified.");
 }
 
 echo "Using config $configFile";
-var_dump($config);
 
 // Grab the values from the config
 $workers = get_value('workers', $config, 1);
@@ -50,6 +50,7 @@ for($i = 0; $i < $testCount; $i++) {
     // Execute the command
     echo "Running command:\n$command";
     $execution = exec(escapeshellcmd($command));
+    exec('sleep 5');
 }
 
 if($execution) die("Testing finished");
