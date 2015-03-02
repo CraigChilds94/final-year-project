@@ -4,10 +4,7 @@ import com.jezhumble.javasysmon.CpuTimes;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.MemoryStats;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Date;
 
 /**
@@ -40,6 +37,10 @@ public class SystemMonitor implements Runnable {
 
     @Override
     public void run() {
+
+        File f = new File(SystemMonitor.logFile);
+        Boolean newFile = !f.exists();
+
         while(running) {
             Date time = new Date(System.currentTimeMillis());
             long cpuFreq = systemMonitor.cpuFrequencyInHz() / 100000L;
@@ -60,8 +61,21 @@ public class SystemMonitor implements Runnable {
                 file = new FileWriter(SystemMonitor.logFile, true);
                 writer = new PrintWriter(new BufferedWriter(file));
 
-                String message = new StringBuilder()
-                        .append(time).append(",")
+                StringBuilder builder = new StringBuilder();
+
+                if(newFile) {
+                    builder.append("Time").append(",")
+                            .append("CPU Freq").append(",")
+                            .append("CPU Usage").append(",")
+                            .append("Free Mem (Bytes)").append(",")
+                            .append("Total Mem (Bytes)").append(",")
+                            .append("Used Mem (Bytes)").append(",")
+                            .append("\n");
+
+                    newFile = false;
+                }
+
+                String message = builder.append(time).append(",")
                         .append(cpuFreq).append(",")
                         .append(usage).append(",")
                         .append(freeMem).append(",")
@@ -69,7 +83,7 @@ public class SystemMonitor implements Runnable {
                         .append(usedMem)
                         .toString();
 
-                writer.println(message);
+                writer.println(builder);
                 writer.close();
                 file.close();
                 Thread.sleep((long) 2000);

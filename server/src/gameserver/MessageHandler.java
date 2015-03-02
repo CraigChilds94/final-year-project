@@ -2,7 +2,6 @@ package gameserver;
 
 import org.java_websocket.WebSocket;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
