@@ -24,16 +24,15 @@ public class GameServer extends WebSocketServer {
      * @param args CMD Args
      */
     public static void main(String[] args) throws IOException {
-        GameServer gs = new GameServer();
-        gs.run();
-
-
         // If we pass an argument, use it as the log file
         if(args.length > 1) {
             if(!args[1].equals("")) {
                 SystemMonitor.logFile = args[1];
             }
         }
+
+        GameServer gs = new GameServer();
+        gs.run();
     }
 
     /**
