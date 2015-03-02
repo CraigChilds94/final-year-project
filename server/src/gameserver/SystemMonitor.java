@@ -69,7 +69,7 @@ public class SystemMonitor implements Runnable {
                             .append("CPU Usage").append(",")
                             .append("Free Mem (Bytes)").append(",")
                             .append("Total Mem (Bytes)").append(",")
-                            .append("Used Mem (Bytes)").append(",")
+                            .append("Used Mem (Bytes)")
                             .append("\n");
 
                     newFile = false;
