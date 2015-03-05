@@ -41,7 +41,7 @@ public class GameServer extends WebSocketServer {
      */
     public GameServer() throws IOException {
         // Address and number of threads to spawn
-        super(new InetSocketAddress("178.62.123.157", 1234), 8);
+        super(new InetSocketAddress(1234), 8);
         clients = new HashMap<WebSocket, Integer>();
 
         // Run some system monitoring
@@ -91,8 +91,8 @@ public class GameServer extends WebSocketServer {
         clients.remove(webSocket);
 
         // Send
-        WebSocket[] sockets = MessageHandler.process(message);
-        this.broadcast(sockets, message);
+//        WebSocket[] sockets = MessageHandler.process(message);
+//        this.broadcast(sockets, message);
     }
 
     /**
@@ -109,7 +109,7 @@ public class GameServer extends WebSocketServer {
         // Work out what response we give to who
         WebSocket[] sockets = MessageHandler.process(message);
 
-        this.broadcast(sockets, message);
+//        this.broadcast(sockets, message);
     }
 
     /**
