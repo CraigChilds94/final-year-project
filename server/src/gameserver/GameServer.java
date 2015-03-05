@@ -17,7 +17,6 @@ public class GameServer extends WebSocketServer {
 
     public static HashMap<WebSocket, Integer> clients; // Where we store refs to clients
 
-
     /**
      * Application main
      *
