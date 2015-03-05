@@ -30,6 +30,7 @@ echo "Using config $configFile \n";
 // Grab the values from the config
 $workers = get_value('workers', $config, 1);
 $clientNum = get_value('client_count', $config, 1);
+$concurrentNum = get_value('concurrent_count', $config, $clientNum);
 $generatorFile = get_value('generator_file', $config, 'generator.js');
 $messageCount = get_value('message_count', $config, 1);
 $uri = get_value('uri', $config, 'ws://localhost:4848');
@@ -48,7 +49,7 @@ for($i = 0; $i < $testCount; $i++) {
     $output = $testName . '/' . $output;
 
     // Build the command string
-    $command = "thor --workers $workers --amount $clientNum --generator $generatorFile --messages $messageCount $uri > $output";
+    $command = "thor --workers $workers --amount $clientNum --concurrent $concurrentNum --generator $generatorFile --messages $messageCount $uri > $output";
 
     // Execute the command
     echo "\n Running command:\n$command";

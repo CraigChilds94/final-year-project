@@ -1,6 +1,7 @@
 {
     "workers": 1,
     "client_count": 10,
+    "concurrent_count": 1,
     "generator_file": "generator.js",
     "message_count": 1,
     "uri": "ws://178.62.123.157:1234",
