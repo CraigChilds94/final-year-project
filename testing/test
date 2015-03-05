@@ -5,30 +5,65 @@ delay=1
 
 #### Mass connection tests
 # 10 Connections
+echo "Starting test 10/1"
 php run_tests name=mass_connections/10_connections/test_1
+echo "Finishing test 10/1"
 sleep $delay
+
+echo "Starting test 10/5"
 php run_tests name=mass_connections/10_connections/test_5/
+echo "Finishing test 10/5"
 sleep $delay
+
+echo "Starting test 10/10"
 php run_tests name=mass_connections/10_connections/test_10/
+echo "Finishing test 10/10"
 sleep $delay
+
 # 100 Connections
+echo "Starting test 100/1"
 php run_tests name=mass_connections/100_connections/test_1
+echo "Finishing test 100/1"
 sleep $delay
+
+echo "Starting test 100/50"
 php run_tests name=mass_connections/100_connections/test_50/
+echo "Finishing test 100/50"
 sleep $delay
+
+echo "Starting test 100/10"
 php run_tests name=mass_connections/100_connections/test_100/
+echo "Finishing test 100/10"
 sleep $delay
+
 # 1,000 Connections
+echo "Starting test 1000/1"
 php run_tests name=mass_connections/1000_connections/test_1
+echo "Finishing test 1000/1"
 sleep $delay
+
+echo "Starting test 1000/500"
 php run_tests name=mass_connections/1000_connections/test_500/
+echo "Finishing test 1000/500"
 sleep $delay
+
+echo "Starting test 1000/1000"
 php run_tests name=mass_connections/1000_connections/test_1000/
+echo "Finishing test 1000/1000"
 sleep $delay
+
 # 10,000 Connections
+echo "Starting test 10000/1"
 php run_tests name=mass_connections/10000_connections/test_1
+echo "Finishing test 10000/1"
 sleep $delay
+
+echo "Starting test 10000/5000"
 php run_tests name=mass_connections/10000_connections/test_5000/
+echo "Finishing test 10000/5000"
 sleep $delay
+
+echo "Starting test 10000/10000"
 php run_tests name=mass_connections/10000_connections/test_10000/
+echo "Finishing test 10000/10000"
 sleep $delay
