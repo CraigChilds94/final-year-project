@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Run a quick local test
+thor --amount 1 --messages 1 --generator generator.js ws://localhost:1234
