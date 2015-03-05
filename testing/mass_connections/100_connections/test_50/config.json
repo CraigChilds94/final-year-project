@@ -1,6 +1,6 @@
 {
     "workers": 1,
-    "client_count": 10,
+    "client_count": 100,
     "concurrent_count": 50,
     "generator_file": "generator.js",
     "message_count": 1,
