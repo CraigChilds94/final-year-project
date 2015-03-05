@@ -1,0 +1,10 @@
+{
+    "workers": 1,
+    "client_count": 10,
+    "concurrent_count": 500,
+    "generator_file": "generator.js",
+    "message_count": 1,
+    "uri": "ws://178.62.123.157:1234",
+    "output_file": "results.txt",
+    "test_count": 5
+}
