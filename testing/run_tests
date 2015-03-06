@@ -46,14 +46,14 @@ for($i = 0; $i < $testCount; $i++) {
     }
 
     // Add in the test path
-    $output = $testName . '/' . $output;
+    $output = $testName . '/' . date("d_m_Y") . '_' . $output;
 
     // Build the command string
     $command = "thor --workers $workers --amount $clientNum --concurrent $concurrentNum --generator $generatorFile --messages $messageCount $uri > $output";
 
     // Execute the command
     echo "\n Running command:\n$command";
-    $execution = exec(escapeshellcmd($command));
+    $execution = exec($command);
     exec('sleep 5');
 }
 
