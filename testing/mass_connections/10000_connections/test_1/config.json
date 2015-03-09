@@ -1,5 +1,5 @@
 {
-    "workers": 1,
+    "workers": 4,
     "client_count": 10000,
     "concurrent_count": 1,
     "generator_file": "generator.js",

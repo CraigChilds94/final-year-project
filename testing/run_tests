@@ -1,5 +1,7 @@
 #!/usr/bin/php
 <?php
+// Stop errors from displaying
+error_reporting(0);
 
 // Put all args in $_GET
 // e.g. arg =>     name=value

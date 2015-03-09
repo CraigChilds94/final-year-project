@@ -1,0 +1,35 @@
+
+Thor:                                                  version: 1.0.0
+
+God of Thunder, son of Odin and smasher of WebSockets!
+
+Thou shall:
+- Spawn 1 workers.
+- Create 10 concurrent/parallel connections.
+- Smash 10 connections with the mighty Mjölnir.
+
+The answers you seek shall be yours, once I claim what is mine.
+
+Connecting to ws://178.62.123.157:1234
+
+
+                     
+Online               170 milliseconds
+Time taken           213 milliseconds
+Connected            10
+Disconnected         0
+Failed               0
+Total transferred    1.82kB
+Total received       1.49kB
+
+Durations (ms):
+
+                     min     mean     stddev  median max    
+Handshaking          51      79           23      81 103    
+Latency              14      17            2      17 21     
+
+Percentile (ms):
+
+                      50%     66%     75%     80%     90%     95%     98%     98%    100%   
+Handshaking          81      101     102     102     103     103     103     103     103    
+Latency              17      18      19      20      21      21      21      21      21     
