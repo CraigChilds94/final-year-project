@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="server:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/server_jar</output-path>
+    <root id="archive" name="server.jar">
+      <element id="module-output" name="server" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/TooTallNate-Java-WebSocket-05d2e2e/dist/java_websocket.jar" path-in-jar="/" />
+      <element id="library" level="project" name="java_websocket" />
+      <element id="artifact" artifact-name="javasysmon-0_3_5" />
+      <element id="library" level="project" name="javasysmon-0.3.5" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/javasysmon-0.3.5.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
