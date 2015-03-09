@@ -2,8 +2,12 @@
   <library name="java_websocket">
     <CLASSES>
       <root url="jar://$USER_HOME$/Downloads/TooTallNate-Java-WebSocket-05d2e2e/dist/java_websocket.jar!/" />
+      <root url="jar://$USER_HOME$/Downloads/javasysmon-0.3.5.jar!/" />
     </CLASSES>
     <JAVADOC />
+    <NATIVE>
+      <root url="jar://$USER_HOME$/Downloads/javasysmon-0.3.5.jar!/" />
+    </NATIVE>
     <SOURCES />
   </library>
 </component>
