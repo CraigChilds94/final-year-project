@@ -2,4 +2,4 @@
 
 # Run a quick local test
 # thor --amount 1 --messages 1 --generator generator.js ws://localhost:1234
-thor --workers 1 --amount 10 --concurrent 1 --generator generator.js --messages 1 ws://178.62.123.157:1234 > abc.txt
+thor --workers 1 --amount 10 --concurrent 1 --generator generator.js --messages 1 ws://localhost:1234 > abc.txt

@@ -9,7 +9,7 @@
  * @public
  */
 exports.utf8 = function utf(size, fn) {
-  var id = Math.random() * (10000 - 1) + 1;
+  var id = parseInt(Math.round(Math.random() * (10000 - 1) + 1));
   var message = JSON.stringify({
      x: 1,
      y: -1

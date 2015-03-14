@@ -96,13 +96,9 @@ public class MessageHandler {
             }
         }
 
-        Object[] socketList = sockets.toArray();
-
-        if(socketList.length > 0) {
-            return (WebSocket[]) socketList;
-        } else {
-            return new WebSocket[0];
-        }
+        WebSocket[] socketList = new WebSocket[sockets.size()];
+        socketList = sockets.toArray(socketList);
+        return socketList;
     }
 
 }

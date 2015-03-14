@@ -76,7 +76,7 @@ php run_tests name=mass_messages/10_connections
 echo "Finishing test 10/1000"
 sleep $delay
 # 100 Connections
-echo "Starting test 100/1000"
-php run_tests name=mass_messages/100_connections
-echo "Finishing test 100/1000"
-sleep $delay
+# echo "Starting test 100/1000"
+# php run_tests name=mass_messages/100_connections
+# echo "Finishing test 100/1000"
+# sleep $delay
