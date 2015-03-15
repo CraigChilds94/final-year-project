@@ -1,5 +1,7 @@
 package gameserver;
 
+import org.java_websocket.WebSocket;
+
 /**
  * Type representing a Message which is
  * being sent between server and client

@@ -132,7 +132,7 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onError(WebSocket webSocket, Exception e)
     {
-        System.out.println(e);
+        e.printStackTrace();
     }
 
     /**
@@ -146,5 +146,6 @@ public class GameServer extends WebSocketServer {
         for(WebSocket socket : sockets) {
             socket.send(MessageHandler.build(message));
         }
+
     }
 }
