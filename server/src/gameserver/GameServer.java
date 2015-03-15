@@ -22,7 +22,7 @@ public class GameServer extends WebSocketServer {
      *
      * @param args CMD Args
      */
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args)  {
         // If we pass an argument, use it as the log file
         if(args.length > 0) {
             if(!args[0].equals("")) {
@@ -32,8 +32,14 @@ public class GameServer extends WebSocketServer {
             SystemMonitor.logFile = SystemMonitor.logFileName();
         }
 
-        GameServer gs = new GameServer();
-        gs.run();
+        GameServer gs = null;
+
+        try {
+            gs = new GameServer();
+            gs.run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -59,16 +65,18 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake)
     {
-        // Generate client UID, we'll just use 32-bit ints so we'll get
-        // the hashcode of it instead
-        int id = UUID.randomUUID().hashCode();
+        synchronized (clients) {
+            // Generate client UID, we'll just use 32-bit ints so we'll get
+            // the hashcode of it instead
+            int id = UUID.randomUUID().hashCode();
 
-        // Put client in a Map
-        clients.put(webSocket, id);
+            // Put client in a Map
+            clients.put(webSocket, id);
 
-        // Build a new connected message and send it to the client
-        Message connected = new Message(Message.connection, id, -1, "");
-        webSocket.send(MessageHandler.build(connected));
+            // Build a new connected message and send it to the client
+            Message connected = new Message(Message.connection, id, -1, "");
+            webSocket.send(MessageHandler.build(connected));
+        }
     }
 
     /**
@@ -81,18 +89,20 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b)
     {
-        // Grab the client
-        int id = clients.get(webSocket);
+        synchronized (clients) {
+            // Grab the client
+            int id = clients.get(webSocket);
 
-        // Build the clientDisconnect message
-        Message message = new Message(Message.clientDisconnect, id, -1, "");
+            // Build the clientDisconnect message
+            Message message = new Message(Message.clientDisconnect, id, -1, "");
 
-        // Remove the client from the list of disconnections
-        clients.remove(webSocket);
+            // Remove the client from the list of disconnections
+            clients.remove(webSocket);
 
-        // Send
-        WebSocket[] sockets = MessageHandler.process(message);
-        this.broadcast(sockets, message);
+            // Send
+            WebSocket[] sockets = MessageHandler.process(message);
+            this.broadcast(sockets, message);
+        }
     }
 
     /**
@@ -103,13 +113,15 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onMessage(WebSocket webSocket, String s)
     {
-        // Get a message and parse it
-        Message message = MessageHandler.parse(s);
+        synchronized (clients) {
+            // Get a message and parse it
+            Message message = MessageHandler.parse(s);
 
-        // Work out what response we give to who
-        WebSocket[] sockets = MessageHandler.process(message);
+            // Work out what response we give to who
+            WebSocket[] sockets = MessageHandler.process(message);
 
-        this.broadcast(sockets, message);
+            this.broadcast(sockets, message);
+        }
     }
 
     /**
