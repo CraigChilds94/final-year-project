@@ -42,7 +42,6 @@ public class SystemMonitor implements Runnable {
 
         while(running) {
             Date time = new Date(System.currentTimeMillis());
-            long cpuFreq = systemMonitor.cpuFrequencyInHz() / 100000L;
             CpuTimes times = systemMonitor.cpuTimes();
 
             float usage = 0;
@@ -55,6 +54,7 @@ public class SystemMonitor implements Runnable {
             long freeMem = mem.getFreeBytes();
             long totalMem = mem.getTotalBytes();
             long usedMem = totalMem - freeMem;
+            int numClients = (GameServer.clients != null ? GameServer.clients.size() : 0);
 
             try {
                 file = new FileWriter(SystemMonitor.logFile, true);
@@ -64,22 +64,22 @@ public class SystemMonitor implements Runnable {
 
                 if(newFile) {
                     builder.append("Time").append(",")
-                            .append("CPU Freq").append(",")
                             .append("CPU Usage").append(",")
                             .append("Free Mem (Bytes)").append(",")
                             .append("Total Mem (Bytes)").append(",")
-                            .append("Used Mem (Bytes)")
+                            .append("Used Mem (Bytes)").append(",")
+                            .append("Num of Clients")
                             .append("\n");
 
                     newFile = false;
                 }
 
                 String message = builder.append(time).append(",")
-                        .append(cpuFreq).append(",")
                         .append(usage).append(",")
                         .append(freeMem).append(",")
                         .append(totalMem).append(",")
-                        .append(usedMem)
+                        .append(usedMem).append(",")
+                        .append(numClients)
                         .toString();
 
                 writer.println(builder);
