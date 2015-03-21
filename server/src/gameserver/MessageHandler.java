@@ -90,6 +90,9 @@ public class MessageHandler {
             // Get all other clients
             for(WebSocket socket : GameServer.clients.keySet()) {
                 int id = GameServer.clients.get(socket);
+
+                System.out.println(id + ":" + message.getClientID());
+
                 if(id != message.getClientID()) {
                     sockets.add(socket);
                 }

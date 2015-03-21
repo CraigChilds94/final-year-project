@@ -21,7 +21,8 @@ public class Message {
     // of content
     private String body;
 
-    public Message(int action, int clientID, int recipient, String body) {
+    public Message(int action, int clientID, int recipient, String body)
+    {
         this.action = action;
         this.clientID = clientID;
         this.recipient = recipient;
@@ -33,7 +34,8 @@ public class Message {
      *
      * @return The ID which represents an action
      */
-    public int getAction() {
+    public int getAction()
+    {
         return this.action;
     }
 
@@ -42,7 +44,8 @@ public class Message {
      *
      * @return The sending clients ID
      */
-    public int getClientID() {
+    public int getClientID()
+    {
         return this.clientID;
     }
 
@@ -51,7 +54,8 @@ public class Message {
      *
      * @return The recipients ID
      */
-    public int getRecipient() {
+    public int getRecipient()
+    {
         return this.recipient;
     }
 
@@ -60,7 +64,8 @@ public class Message {
      *
      * @return The body of the message
      */
-    public String getBody() {
+    public String getBody()
+    {
         return this.body;
     }
 
@@ -71,7 +76,8 @@ public class Message {
      * @return String
      */
     @Override
-    public String toString() {
+    public String toString()
+    {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(this.getAction() + "\n");
         stringBuilder.append(this.getClientID() + "\n");

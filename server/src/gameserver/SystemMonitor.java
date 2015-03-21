@@ -3,9 +3,11 @@ package gameserver;
 import com.jezhumble.javasysmon.CpuTimes;
 import com.jezhumble.javasysmon.JavaSysMon;
 import com.jezhumble.javasysmon.MemoryStats;
+import org.java_websocket.WebSocket;
 
 import java.io.*;
 import java.util.Date;
+import java.util.HashMap;
 
 /**
  * A System Monitoring class which runs on
@@ -22,7 +24,8 @@ public class SystemMonitor implements Runnable {
 
     public static String logFile = "log.csv";
 
-    public SystemMonitor() throws IOException {
+    public SystemMonitor() throws IOException
+    {
         systemMonitor = new JavaSysMon();
         running = true;
     }
@@ -30,12 +33,14 @@ public class SystemMonitor implements Runnable {
     /**
      * Stop the loop from running
      */
-    public void stop() {
+    public void stop()
+    {
         running = false;
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
 
         File f = new File(SystemMonitor.logFile);
         Boolean newFile = !f.exists();
@@ -54,7 +59,6 @@ public class SystemMonitor implements Runnable {
             long freeMem = mem.getFreeBytes();
             long totalMem = mem.getTotalBytes();
             long usedMem = totalMem - freeMem;
-            int numClients = (GameServer.clients != null ? GameServer.clients.size() : 0);
 
             try {
                 file = new FileWriter(SystemMonitor.logFile, true);
@@ -67,8 +71,7 @@ public class SystemMonitor implements Runnable {
                             .append("CPU Usage").append(",")
                             .append("Free Mem (Bytes)").append(",")
                             .append("Total Mem (Bytes)").append(",")
-                            .append("Used Mem (Bytes)").append(",")
-                            .append("Num of Clients")
+                            .append("Used Mem (Bytes)")
                             .append("\n");
 
                     newFile = false;
@@ -78,8 +81,7 @@ public class SystemMonitor implements Runnable {
                         .append(usage).append(",")
                         .append(freeMem).append(",")
                         .append(totalMem).append(",")
-                        .append(usedMem).append(",")
-                        .append(numClients)
+                        .append(usedMem)
                         .toString();
 
                 writer.println(builder);
@@ -97,7 +99,8 @@ public class SystemMonitor implements Runnable {
      * The log file
      * @return String
      */
-    public static String logFileName() {
+    public static String logFileName()
+    {
         return "system_log_" + (new Date(System.currentTimeMillis())).toString().replace(' ', '_') + ".csv";
     }
 }

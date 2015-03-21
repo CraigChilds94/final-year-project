@@ -9,12 +9,22 @@
  * @public
  */
 exports.utf8 = function utf(size, fn) {
-  var id = parseInt(Math.round(Math.random() * (10000 - 1) + 1));
+  var id = parseInt(Math.round(Math.random() * (99999 - 10000) + 1));
   var message = JSON.stringify({
      x: 1,
      y: -1
   });
-  fn(null, "200\n"+ id +"\n-1\n\n" + message);
+
+  message = "200\n"+ id +"\n-1\n\n" + message;
+
+  var key = 'utf8::' + message.length
+   , cached = cache[key];
+
+  // We have a cached version of this size, return that instead.
+  if (cached) return fn(undefined, cached);
+
+  cached = cache[key] = new Buffer(message).toString('utf-8');
+  fn(null, cached);
 };
 
 /**

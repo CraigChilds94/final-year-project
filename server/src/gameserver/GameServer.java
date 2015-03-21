@@ -16,13 +16,16 @@ import java.util.UUID;
 public class GameServer extends WebSocketServer {
 
     public static HashMap<WebSocket, Integer> clients; // Where we store refs to clients
+    private long messagesReceived = 0L,
+                 messagesSent = 0L;
 
     /**
      * Application main
      *
      * @param args CMD Args
      */
-    public static void main(String[] args)  {
+    public static void main(String[] args)
+    {
         // If we pass an argument, use it as the log file
         if(args.length > 0) {
             if(!args[0].equals("")) {
@@ -45,7 +48,8 @@ public class GameServer extends WebSocketServer {
     /**
      * Construct a new Game Server
      */
-    public GameServer() throws IOException {
+    public GameServer() throws IOException
+    {
         // Address and number of threads to spawn
         super(new InetSocketAddress(1234), 8);
         clients = new HashMap<WebSocket, Integer>();
@@ -68,14 +72,14 @@ public class GameServer extends WebSocketServer {
         synchronized (clients) {
             // Generate client UID, we'll just use 32-bit ints so we'll get
             // the hashcode of it instead
-            int id = UUID.randomUUID().hashCode();
-
+//            int id = UUID.randomUUID().hashCode();
             // Put client in a Map
-            clients.put(webSocket, id);
+//            clients.put(webSocket, id);
 
             // Build a new connected message and send it to the client
-            Message connected = new Message(Message.connection, id, -1, "");
+            Message connected = new Message(Message.connection, -1, -1, "You've connected");
             webSocket.send(MessageHandler.build(connected));
+            this.messagesSent++;
         }
     }
 
@@ -103,6 +107,8 @@ public class GameServer extends WebSocketServer {
             WebSocket[] sockets = MessageHandler.process(message);
             this.broadcast(sockets, message);
         }
+
+        System.out.println("Client disconnected: sent(" + this.messagesSent + ") recieved(" + this.messagesReceived + ")");
     }
 
     /**
@@ -116,6 +122,14 @@ public class GameServer extends WebSocketServer {
         synchronized (clients) {
             // Get a message and parse it
             Message message = MessageHandler.parse(s);
+            this.messagesReceived++;
+
+            // Put the client in the list if it's not in there
+            if(!clients.containsKey(webSocket)) {
+                clients.put(webSocket, message.getClientID());
+            }
+
+//            System.out.println("#" + this.messagesReceived + ": \n" + message);
 
             // Work out what response we give to who
             WebSocket[] sockets = MessageHandler.process(message);
@@ -140,10 +154,13 @@ public class GameServer extends WebSocketServer {
      * @param sockets
      * @param message
      */
-    public void broadcast(WebSocket[] sockets, Message message) {
+    public void broadcast(WebSocket[] sockets, Message message)
+    {
+//        System.out.println("Sending to " + sockets.length + " clients");
 
         // Send it out to any required recipients
         for(WebSocket socket : sockets) {
+            this.messagesSent++;
             socket.send(MessageHandler.build(message));
         }
 

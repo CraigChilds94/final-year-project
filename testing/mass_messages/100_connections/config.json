@@ -1,10 +1,10 @@
 {
     "workers": 4,
-    "client_count": 100,
-    "concurrent_count": 100,
-    "generator_file": "generator.js",
-    "message_count": 1000,
+    "client_count": 2,
+    "concurrent_count": 2,
+    "generator_file": "mass_messages/100_connections/generator.js",
+    "message_count": 10,
     "uri": "ws://localhost:1234",
     "output_file": "results.txt",
-    "test_count": 5
+    "test_count": 1
 }
