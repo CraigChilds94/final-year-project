@@ -37,13 +37,27 @@ var Client = (function(socket, Game) {
     /**
      * Called when we receive a message
      * from the server
+     *
+     * @param String    msg
      */
-    function onMessage(message) {
+    function onMessage(msg) {
 
         var entity = Game.entities.find('player');
+        var message = Messages.parse(msg);
 
         if(entity != undefined) {
             entity.onMessage(message);
+        }
+
+        console.log(message.toString());
+
+        if(message.getAction() == Messages.types.playerConnection) {
+            console.log("Another player connected");
+            var newPlayer = new Player(PIXI, Game, self);
+            newPlayer.init();
+
+            Game.entities.add(message.getClientID(), newPlayer);
+            Game.stage.addChild(newPlayer.sprite);
         }
     }
 
@@ -81,10 +95,12 @@ var Client = (function(socket, Game) {
     }
 
     // Give back the data we want access to
-    return {
+    var self = {
         send : sendMessage,
         close: closeConnection,
         socket: socket,
         isConnected: isConnected
     };
+
+    return self;
 });

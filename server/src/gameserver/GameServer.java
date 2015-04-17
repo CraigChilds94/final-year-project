@@ -75,13 +75,24 @@ public class GameServer extends WebSocketServer {
             // the hashcode of it instead
             int id = UUID.randomUUID().hashCode();
 
-            // Put client in a Map
-            clients.put(webSocket, id);
+            if(clients.size() > 0) {
+
+                System.out.println("Telling other clients");
+                Message connBroadcast = new Message(Message.playerConnection, id, -1, "Another client has connected");
+                WebSocket[] sockets = MessageHandler.process(clients, connBroadcast);
+                this.broadcast(sockets, connBroadcast);
+
+            }
 
             // Build a new connected message and send it to the client
             Message connected = new Message(Message.connection, id, -1, "You've connected");
             webSocket.send(MessageHandler.build(connected));
             this.messagesSent++;
+
+            System.out.println("Storing client reference");
+
+            // Put client in a Map
+            clients.put(webSocket, id);
         }
     }
 
@@ -106,11 +117,11 @@ public class GameServer extends WebSocketServer {
             clients.remove(webSocket);
 
             // Send
-            WebSocket[] sockets = MessageHandler.process(message);
+            WebSocket[] sockets = MessageHandler.process(clients, message);
             this.broadcast(sockets, message);
         }
 
-        System.out.println("Client disconnected: sent(" + this.messagesSent + ") recieved(" + this.messagesReceived + ")");
+//        System.out.println("Client disconnected: sent(" + this.messagesSent + ") recieved(" + this.messagesReceived + ")");
     }
 
     /**
@@ -131,10 +142,10 @@ public class GameServer extends WebSocketServer {
                 clients.put(webSocket, message.getClientID());
             }
 
-            System.out.println("#" + this.messagesReceived + ": \n" + message);
+//            System.out.println("#" + this.messagesReceived + ": \n" + message);
 
             // Work out what response we give to who
-            WebSocket[] sockets = MessageHandler.process(message);
+            WebSocket[] sockets = MessageHandler.process(clients, message);
 
             this.broadcast(sockets, message);
         }

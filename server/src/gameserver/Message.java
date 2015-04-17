@@ -9,7 +9,7 @@ import org.java_websocket.WebSocket;
 public class Message {
 
     public static final int connection = 100, // Represents a new connection msg
-                            disconnect = 101, // When we need to tell a client to disconnect
+                            playerConnection = 101, // When we need to tell a client that a new player has connected
                             clientDisconnect = 102, // Represents a client disconnection
                             moveUpdate = 200; // Represents an update msg
 

@@ -24,8 +24,7 @@ var EntityMap = (function() {
      * @param Object entity
      * @return String the UID for this entity
      */
-    function add(entity) {
-        var UID = 'player';
+    function add(UID, entity) {
         map[UID] = entity;
         return UID;
     }

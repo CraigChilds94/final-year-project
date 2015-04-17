@@ -29,7 +29,7 @@ player.init();
 // Keep track of any networked entities in the game
 // Add the player by default
 Game.entities = new EntityMap();
-Game.entities.add(player);
+Game.entities.add('player', player);
 
 // Add stuff to the stage
 Game.stage.addChild(player.sprite);

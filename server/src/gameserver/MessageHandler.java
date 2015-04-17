@@ -3,6 +3,7 @@ package gameserver;
 import org.java_websocket.WebSocket;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Handle message building and parsing
@@ -80,22 +81,26 @@ public class MessageHandler {
      * @param message The message object
      * @return WebSocket array, recipients
      */
-    public static WebSocket[] process(Message message)
+    public static WebSocket[] process(HashMap<WebSocket, Integer> clients, Message message)
     {
         ArrayList<WebSocket> sockets = new ArrayList<WebSocket>();
 
         // If we're getting a movement update
-        if(message.getAction() == Message.moveUpdate) {
+        if(message.getAction() == Message.moveUpdate || message.getAction() == Message.playerConnection) {
 
-            // Get all other clients
-            for(WebSocket socket : GameServer.clients.keySet()) {
-                int id = GameServer.clients.get(socket);
+            synchronized (clients) {
 
-                System.out.println(id + ":" + message.getClientID());
+                // Get all other clients
+                for (WebSocket socket : clients.keySet()) {
+                    int id = clients.get(socket);
 
-                if(id != message.getClientID()) {
-                    sockets.add(socket);
+                    System.out.println(id + ":" + message.getClientID());
+
+                    if (id != message.getClientID()) {
+                        sockets.add(socket);
+                    }
                 }
+
             }
         }
 

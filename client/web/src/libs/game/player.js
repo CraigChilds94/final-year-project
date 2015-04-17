@@ -61,7 +61,7 @@ var Player = (function(PIXI, world, client) {
             });
         }
 
-        networkUpdate(500);
+        networkUpdate(200);
     }
 
     /**
@@ -80,7 +80,7 @@ var Player = (function(PIXI, world, client) {
                     body: JSON.stringify(delta)
                 });
 
-                console.log(msg.toString());
+                // console.log(msg.toString());
                 client.send(msg.toString());
             }
         }, rate);
@@ -136,10 +136,9 @@ var Player = (function(PIXI, world, client) {
     /**
      * Handle an incoming message for this entity
      *
-     * @param String data
+     * @param String message
      */
-    function onMessage(data) {
-        var message = Messages.parse(data);
+    function onMessage(message) {
         var action = message.getAction();
 
         // Handle initial connection to the server

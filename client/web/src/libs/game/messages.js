@@ -8,6 +8,9 @@ var Messages = {
         // Represents a new client connection
         connection: 100,
 
+        // represent a player connecting
+        playerConnection: 101,
+
         // Represents a moveUpdate
         // sent from client to server
         // and server to client
