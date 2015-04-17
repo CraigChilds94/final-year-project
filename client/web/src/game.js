@@ -38,7 +38,10 @@ Game.stage.addChild(player.sprite);
 requestAnimationFrame(update);
 function update() {
     Game.keyboard.bind();
-    player.update();
+    for(i in Game.entities.getMap()) {
+        var e = Game.entities.getMap()[i];
+        e.update();
+    }
     Game.renderer.render(Game.stage);
     requestAnimationFrame(update);
 }

@@ -11,10 +11,20 @@ var Messages = {
         // represent a player connecting
         playerConnection: 101,
 
+        // Handle ack of existing connections
+        existingConnections: 102,
+
+        // Disconnection of a client
+        disconnect: 103,
+
         // Represents a moveUpdate
         // sent from client to server
         // and server to client
-        moveUpdate: 200
+        moveUpdate: 200,
+
+        // Represent a forced position
+        // update message.
+        positionUpdate: 201,
     },
 
 

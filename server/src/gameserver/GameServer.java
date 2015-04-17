@@ -7,6 +7,7 @@ import org.java_websocket.server.WebSocketServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -77,19 +78,20 @@ public class GameServer extends WebSocketServer {
 
             if(clients.size() > 0) {
 
-                System.out.println("Telling other clients");
+//                System.out.println("Telling other clients");
                 Message connBroadcast = new Message(Message.playerConnection, id, -1, "Another client has connected");
                 WebSocket[] sockets = MessageHandler.process(clients, connBroadcast);
                 this.broadcast(sockets, connBroadcast);
-
             }
 
             // Build a new connected message and send it to the client
-            Message connected = new Message(Message.connection, id, -1, "You've connected");
+            Message connected = new Message(Message.connection, id, -1, "");
             webSocket.send(MessageHandler.build(connected));
-            this.messagesSent++;
 
-            System.out.println("Storing client reference");
+            Message existing = new Message(Message.existingConnections, id, -1, clients.values().toString());
+            webSocket.send(MessageHandler.build(existing));
+            this.messagesSent += 2;
+
 
             // Put client in a Map
             clients.put(webSocket, id);
@@ -174,8 +176,34 @@ public class GameServer extends WebSocketServer {
         // Send it out to any required recipients
         for(WebSocket socket : sockets) {
             this.messagesSent++;
+
+            int id = clients.get(socket);
+
+            message.setRecipient(id);
+
             socket.send(MessageHandler.build(message));
         }
 
+    }
+
+    /**
+     * Send to a specific ID
+     *
+     * @param id
+     * @param message
+     */
+    public void sendTo(int id, Message message)
+    {
+        System.out.println("Message being sent to : " + id);
+
+        for(Map.Entry<WebSocket, Integer> entry : clients.entrySet()) {
+
+            if(id == entry.getValue()) {
+                WebSocket socket = entry.getKey();
+                socket.send(MessageHandler.build(message));
+                return;
+            }
+
+        }
     }
 }

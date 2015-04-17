@@ -49,15 +49,65 @@ var Client = (function(socket, Game) {
             entity.onMessage(message);
         }
 
-        console.log(message.toString());
 
-        if(message.getAction() == Messages.types.playerConnection) {
-            console.log("Another player connected");
+        var action = message.getAction();
+
+        // Handle new player connection
+        if(action == Messages.types.playerConnection) {
+            console.log(message.toString());
             var newPlayer = new Player(PIXI, Game, self);
+            newPlayer.setID(message.getClientID());
             newPlayer.init();
 
             Game.entities.add(message.getClientID(), newPlayer);
             Game.stage.addChild(newPlayer.sprite);
+        }
+
+        // Handle disconnects
+        if(action == Messages.types.disconnect) {
+            var id = message.getClientID();
+
+            var player = Game.entities.find(id);
+            Game.stage.removeChild(player.sprite);
+            Game.entities.remove(id);
+
+        }
+
+        // Handle existing players
+        if(action == Messages.types.existingConnections) {
+            console.log(message.getBody());
+            var body = message.getBody();
+            var ids = body.replace(/[\[\]']+/g,'').split(',');
+            console.log(ids);
+
+            for(i in ids) {
+                var playerID = ids[i];
+                var newPlayer = new Player(PIXI, Game, self);
+                newPlayer.setID(playerID);
+                newPlayer.init();
+
+                Game.entities.add(playerID, newPlayer);
+                Game.stage.addChild(newPlayer.sprite);
+
+                console.log(playerID);
+            }
+        }
+
+        // Handle position updates
+        if(action == Messages.types.positionUpdate) {
+            var player = Game.entities.find(message.getClientID());
+            var position = JSON.parse(message.getBody());
+
+            player.setPosition(position.x, position.y);
+        }
+
+        // Handle delta change updates
+        if(action == Messages.types.moveUpdate) {
+            var player = Game.entities.find(message.getClientID());
+            var delta = JSON.parse(message.getBody());
+
+            if(player == 'undefined' || !player || player == null) return;
+            player.setDelta(delta.x, delta.y);
         }
     }
 

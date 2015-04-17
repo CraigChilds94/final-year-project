@@ -30,6 +30,19 @@ var EntityMap = (function() {
     }
 
     /**
+     * Remove entity from map
+     *
+     * @param  Integer UID
+     */
+    function remove(UID) {
+        var index = map.indexOf(UID);
+
+        if(index != -1) {
+            map.splice(index, 1);
+        }
+    }
+
+    /**
      * Get for the map field
      *
      * @return Array the entity map

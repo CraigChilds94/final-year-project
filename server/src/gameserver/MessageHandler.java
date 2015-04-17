@@ -85,8 +85,10 @@ public class MessageHandler {
     {
         ArrayList<WebSocket> sockets = new ArrayList<WebSocket>();
 
+        int act = message.getAction();
+
         // If we're getting a movement update
-        if(message.getAction() == Message.moveUpdate || message.getAction() == Message.playerConnection) {
+        if(act == Message.moveUpdate || act == Message.playerConnection || act == Message.positionUpdate) {
 
             synchronized (clients) {
 
@@ -94,7 +96,7 @@ public class MessageHandler {
                 for (WebSocket socket : clients.keySet()) {
                     int id = clients.get(socket);
 
-                    System.out.println(id + ":" + message.getClientID());
+//                    System.out.println(id + ":" + message.getClientID());
 
                     if (id != message.getClientID()) {
                         sockets.add(socket);

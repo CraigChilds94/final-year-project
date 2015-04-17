@@ -8,7 +8,7 @@
 var Player = (function(PIXI, world, client) {
 
     // Store the id of the player
-    var id;
+    var id = 0;
 
     // Store some positional info
     var pos = {
@@ -29,7 +29,7 @@ var Player = (function(PIXI, world, client) {
 
     // Store the sprite details
     var sprite = new PIXI.Sprite(
-        new PIXI.Texture.fromImage("http://placekitten.com/g/200/300")
+        new PIXI.Texture.fromImage("img/player.png")
     );
 
     /**
@@ -72,7 +72,7 @@ var Player = (function(PIXI, world, client) {
      */
     function networkUpdate(rate) {
         setInterval(function() {
-            if(client.isConnected() && JSON.stringify(delta) != lastDelta && !idle) {
+            if(controlled && client.isConnected() && JSON.stringify(delta) != lastDelta) {
 
                 var msg = Messages.build(getID(), {
                     action: Messages.types.moveUpdate,
@@ -145,6 +145,14 @@ var Player = (function(PIXI, world, client) {
         if(action == Messages.types.connection) {
             console.log("Connection ack recieved");
             id = message.getClientID();
+
+            var msg = Messages.build(getID(), {
+                action: Messages.types.positionUpdate,
+                recipient: -1,
+                body: JSON.stringify(pos)
+            });
+
+            client.send(msg.toString());
         }
     }
 
@@ -157,6 +165,14 @@ var Player = (function(PIXI, world, client) {
         return id;
     }
 
+    /**
+     * Set the ID of the player
+     * @param Integer i
+     */
+    function setID(i) {
+        id = i;
+    }
+
     // Public methods and properties
     return {
         position: pos,
@@ -167,6 +183,7 @@ var Player = (function(PIXI, world, client) {
         setControlled: setControlled,
         init: init,
         onMessage: onMessage,
-        getID: getID
+        getID: getID,
+        setID: setID
     };
 });
