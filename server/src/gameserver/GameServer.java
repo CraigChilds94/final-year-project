@@ -35,7 +35,7 @@ public class GameServer extends WebSocketServer {
             SystemMonitor.logFile = SystemMonitor.logFileName();
         }
 
-        GameServer gs = null;
+        GameServer gs;
 
         try {
             gs = new GameServer();
@@ -55,8 +55,8 @@ public class GameServer extends WebSocketServer {
         clients = new HashMap<WebSocket, Integer>();
 
         // Run some system monitoring
-        Thread t = new Thread(new SystemMonitor());
-        t.start();
+//        Thread t = new Thread(new SystemMonitor());
+//        t.start();
 
         System.out.println("The server is running on: " + this.getAddress());
     }
@@ -70,14 +70,16 @@ public class GameServer extends WebSocketServer {
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake)
     {
         synchronized (clients) {
+
             // Generate client UID, we'll just use 32-bit ints so we'll get
             // the hashcode of it instead
-//            int id = UUID.randomUUID().hashCode();
+            int id = UUID.randomUUID().hashCode();
+
             // Put client in a Map
-//            clients.put(webSocket, id);
+            clients.put(webSocket, id);
 
             // Build a new connected message and send it to the client
-            Message connected = new Message(Message.connection, -1, -1, "You've connected");
+            Message connected = new Message(Message.connection, id, -1, "You've connected");
             webSocket.send(MessageHandler.build(connected));
             this.messagesSent++;
         }
@@ -129,7 +131,7 @@ public class GameServer extends WebSocketServer {
                 clients.put(webSocket, message.getClientID());
             }
 
-//            System.out.println("#" + this.messagesReceived + ": \n" + message);
+            System.out.println("#" + this.messagesReceived + ": \n" + message);
 
             // Work out what response we give to who
             WebSocket[] sockets = MessageHandler.process(message);
@@ -156,7 +158,7 @@ public class GameServer extends WebSocketServer {
      */
     public void broadcast(WebSocket[] sockets, Message message)
     {
-//        System.out.println("Sending to " + sockets.length + " clients");
+        System.out.println("Sending to " + sockets.length + " clients");
 
         // Send it out to any required recipients
         for(WebSocket socket : sockets) {

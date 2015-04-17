@@ -19,12 +19,35 @@ var Messages = {
      * Build a new message into
      * the approrpriate format
      *
-     * @param Integer id Type of message
-     * @param Object data The data to be sent
-     * @return Message The message object
+     * @param   Integer   id      Type of message
+     * @param   Object    data    The data to be sent
+     * @return  Message           The message object
      */
     build: function(id, data) {
         return new Message(data.action, id, data.recipient, data.body);
+    },
+
+    /**
+     * Parse a message from string
+     *
+     * @param  String   msg     The message data
+     * @return Message          The message object
+     */
+    parse: function(msg) {
+        var parts = msg.data.trim().split("\n");
+
+        var type        = parts[0];
+        var clientID    = parts[1];
+        var recipientID = parts[2];
+        var body        = parts[parts.length - 1];
+
+        var data = {
+            action: type,
+            recipient: recipientID,
+            body: body
+        };
+
+        return this.build(clientID, data);
     }
 };
 
@@ -50,14 +73,16 @@ var Message = (function(act, ID, rec, b) {
 
     /**
      * Getter for the client ID
+     *
      * @return int The ID of the client
      */
     function getClientID() {
-        return getClientID;
+        return clientID;
     }
 
     /**
      * Getter for recipient ID
+     *
      * @return int The ID of the intended recipient
      */
     function getRecipient() {
@@ -80,10 +105,10 @@ var Message = (function(act, ID, rec, b) {
      * @return string The string representation of this object
      */
     function toString() {
-        var string =  getAction + "\n"
-                    + getClientID + "\n"
-                    + getRecipient + "\n\n"
-                    + getBody;
+        var string =  getAction() + "\n"
+                    + getClientID() + "\n"
+                    + getRecipient() + "\n\n"
+                    + getBody();
         return string;
     }
 

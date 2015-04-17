@@ -7,6 +7,9 @@
  */
 var Player = (function(PIXI, world, client) {
 
+    // Store the id of the player
+    var id;
+
     // Store some positional info
     var pos = {
         x: 0,
@@ -71,13 +74,14 @@ var Player = (function(PIXI, world, client) {
         setInterval(function() {
             if(client.isConnected() && JSON.stringify(delta) != lastDelta && !idle) {
 
-                var msg = Messages.build(Messages.types.moveUpdate, {
-                    myID: Time.now(),
+                var msg = Messages.build(getID(), {
+                    action: Messages.types.moveUpdate,
+                    recipient: -1,
                     body: JSON.stringify(delta)
                 });
 
+                console.log(msg.toString());
                 client.send(msg.toString());
-
             }
         }, rate);
     }
@@ -135,7 +139,23 @@ var Player = (function(PIXI, world, client) {
      * @param String data
      */
     function onMessage(data) {
-        console.log(data);
+        var message = Messages.parse(data);
+        var action = message.getAction();
+
+        // Handle initial connection to the server
+        if(action == Messages.types.connection) {
+            console.log("Connection ack recieved");
+            id = message.getClientID();
+        }
+    }
+
+    /**
+     * Get the ID for this player
+     *
+     * @return Integer ID
+     */
+    function getID() {
+        return id;
     }
 
     // Public methods and properties
@@ -147,6 +167,7 @@ var Player = (function(PIXI, world, client) {
         setDelta: setDelta,
         setControlled: setControlled,
         init: init,
-        onMessage: onMessage
+        onMessage: onMessage,
+        getID: getID
     };
 });

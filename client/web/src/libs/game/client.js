@@ -39,7 +39,9 @@ var Client = (function(socket, Game) {
      * from the server
      */
     function onMessage(message) {
+
         var entity = Game.entities.find('player');
+
         if(entity != undefined) {
             entity.onMessage(message);
         }
