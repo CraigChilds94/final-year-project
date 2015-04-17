@@ -10,12 +10,6 @@ var Player = (function(PIXI, world, client) {
     // Store the id of the player
     var id = 0;
 
-    // Store some positional info
-    var pos = {
-        x: 0,
-        y: 0
-    };
-
     // Store delta values
     var delta = {
         x: 0,
@@ -111,8 +105,17 @@ var Player = (function(PIXI, world, client) {
      * @param Float  y  The y position
      */
     function setPosition(x, y) {
-        pos.x = x;
-        pos.y = y;
+        sprite.position.x = x;
+        sprite.position.y = y;
+    }
+
+    /**
+     * Get the position of the player
+     *
+     * @param Object position
+     */
+    function getPosition() {
+        return {x: sprite.position.x, y: sprite.position.y};
     }
 
     /**
@@ -144,12 +147,14 @@ var Player = (function(PIXI, world, client) {
         // Handle initial connection to the server
         if(action == Messages.types.connection) {
             console.log("Connection ack recieved");
+            console.log(getPosition());
+
             id = message.getClientID();
 
             var msg = Messages.build(getID(), {
                 action: Messages.types.positionUpdate,
                 recipient: -1,
-                body: JSON.stringify(pos)
+                body: JSON.stringify(getPosition())
             });
 
             client.send(msg.toString());
@@ -175,10 +180,10 @@ var Player = (function(PIXI, world, client) {
 
     // Public methods and properties
     return {
-        position: pos,
         update: update,
         sprite: sprite,
         setPosition: setPosition,
+        getPosition: getPosition,
         setDelta: setDelta,
         setControlled: setControlled,
         init: init,

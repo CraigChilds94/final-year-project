@@ -49,7 +49,6 @@ var Client = (function(socket, Game) {
             entity.onMessage(message);
         }
 
-
         var action = message.getAction();
 
         // Handle new player connection
@@ -97,7 +96,7 @@ var Client = (function(socket, Game) {
         if(action == Messages.types.positionUpdate) {
             var player = Game.entities.find(message.getClientID());
             var position = JSON.parse(message.getBody());
-
+            
             player.setPosition(position.x, position.y);
         }
 
