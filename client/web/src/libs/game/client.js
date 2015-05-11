@@ -51,9 +51,10 @@ var Client = (function(socket, Game) {
 
         var action = message.getAction();
 
+        console.log(message.toString());
+
         // Handle new player connection
         if(action == Messages.types.playerConnection) {
-            console.log(message.toString());
             var newPlayer = new Player(PIXI, Game, self);
             newPlayer.setID(message.getClientID());
             newPlayer.init();
@@ -69,7 +70,6 @@ var Client = (function(socket, Game) {
             var player = Game.entities.find(id);
             Game.stage.removeChild(player.sprite);
             Game.entities.remove(id);
-
         }
 
         // Handle existing players
@@ -96,7 +96,7 @@ var Client = (function(socket, Game) {
         if(action == Messages.types.positionUpdate) {
             var player = Game.entities.find(message.getClientID());
             var position = JSON.parse(message.getBody());
-            
+
             player.setPosition(position.x, position.y);
         }
 

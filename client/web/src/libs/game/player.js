@@ -55,7 +55,7 @@ var Player = (function(PIXI, world, client) {
             });
         }
 
-        networkUpdate(200);
+        networkUpdate(50);
     }
 
     /**

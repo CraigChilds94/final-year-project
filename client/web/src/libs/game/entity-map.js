@@ -37,8 +37,10 @@ var EntityMap = (function() {
     function remove(UID) {
         var index = map.indexOf(UID);
 
+        console.log(index + " : : " + UID);
+
         if(index != -1) {
-            map.splice(index, 1);
+            map = map.splice(index, 1);
         }
     }
 

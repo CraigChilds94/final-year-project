@@ -22,7 +22,7 @@ Game.stage = new PIXI.Stage();
 
 // Create game objects
 var player = new Player(PIXI, Game, client);
-player.setPosition(Game.viewWidth / 2, Game.viewHeight / 2);
+player.setPosition(10, 10);
 player.setControlled(true);
 player.init();
 

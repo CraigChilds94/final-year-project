@@ -100,6 +100,7 @@ public class GameServer extends WebSocketServer {
 
     /**
      * What happens when the connection is closed
+     *
      * @param webSocket     The web socket connection
      * @param i             An integer
      * @param s             A string
@@ -108,6 +109,7 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b)
     {
+
         synchronized (clients) {
             // Grab the client
             int id = clients.get(webSocket);
@@ -123,7 +125,7 @@ public class GameServer extends WebSocketServer {
             this.broadcast(sockets, message);
         }
 
-//        System.out.println("Client disconnected: sent(" + this.messagesSent + ") recieved(" + this.messagesReceived + ")");
+        System.out.println("Client disconnected: sent(" + this.messagesSent + ") recieved(" + this.messagesReceived + ")");
     }
 
     /**
@@ -161,6 +163,7 @@ public class GameServer extends WebSocketServer {
     @Override
     public void onError(WebSocket webSocket, Exception e)
     {
+
         e.printStackTrace();
     }
 
@@ -171,7 +174,7 @@ public class GameServer extends WebSocketServer {
      */
     public void broadcast(WebSocket[] sockets, Message message)
     {
-        System.out.println("Sending to " + sockets.length + " clients");
+//        System.out.println("Sending to " + sockets.length + " clients");
 
         // Send it out to any required recipients
         for(WebSocket socket : sockets) {
@@ -194,7 +197,7 @@ public class GameServer extends WebSocketServer {
      */
     public void sendTo(int id, Message message)
     {
-        System.out.println("Message being sent to : " + id);
+//        System.out.println("Message being sent to : " + id);
 
         for(Map.Entry<WebSocket, Integer> entry : clients.entrySet()) {
 
